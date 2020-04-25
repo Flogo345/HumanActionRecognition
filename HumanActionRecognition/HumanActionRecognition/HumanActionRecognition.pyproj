@@ -22,17 +22,89 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="caffemodel2pytorch\caffemodel2pytorch.py" />
     <Compile Include="HumanActionRecognition.py" />
+    <Compile Include="pytorch-openpose\demo.py" />
+    <Compile Include="pytorch-openpose\demo_camera.py" />
+    <Compile Include="pytorch-openpose\src\body.py" />
+    <Compile Include="pytorch-openpose\src\hand.py" />
+    <Compile Include="pytorch-openpose\src\hand_model_outputsize.py" />
+    <Compile Include="pytorch-openpose\src\model.py" />
+    <Compile Include="pytorch-openpose\src\util.py" />
+    <Compile Include="pytorch-openpose\src\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|Miniconda3" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="caffemodel2pytorch\" />
+    <Folder Include="pytorch-openpose\" />
+    <Folder Include="pytorch-openpose\.git\" />
+    <Folder Include="pytorch-openpose\.git\hooks\" />
+    <Folder Include="pytorch-openpose\.git\info\" />
+    <Folder Include="pytorch-openpose\.git\logs\" />
+    <Folder Include="pytorch-openpose\.git\logs\refs\" />
+    <Folder Include="pytorch-openpose\.git\logs\refs\heads\" />
+    <Folder Include="pytorch-openpose\.git\logs\refs\remotes\" />
+    <Folder Include="pytorch-openpose\.git\logs\refs\remotes\origin\" />
+    <Folder Include="pytorch-openpose\.git\objects\" />
+    <Folder Include="pytorch-openpose\.git\objects\info\" />
+    <Folder Include="pytorch-openpose\.git\objects\pack\" />
+    <Folder Include="pytorch-openpose\.git\refs\" />
+    <Folder Include="pytorch-openpose\.git\refs\heads\" />
+    <Folder Include="pytorch-openpose\.git\refs\remotes\" />
+    <Folder Include="pytorch-openpose\.git\refs\remotes\origin\" />
+    <Folder Include="pytorch-openpose\.git\refs\tags\" />
+    <Folder Include="pytorch-openpose\images\" />
+    <Folder Include="pytorch-openpose\model\" />
+    <Folder Include="pytorch-openpose\notebooks\" />
+    <Folder Include="pytorch-openpose\src\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="caffemodel2pytorch\README.md" />
+    <Content Include="pytorch-openpose\.gitignore" />
+    <Content Include="pytorch-openpose\.git\config" />
+    <Content Include="pytorch-openpose\.git\description" />
+    <Content Include="pytorch-openpose\.git\HEAD" />
+    <Content Include="pytorch-openpose\.git\hooks\applypatch-msg.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\commit-msg.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\fsmonitor-watchman.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\post-update.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\pre-applypatch.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\pre-commit.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\pre-merge-commit.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\pre-push.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\pre-rebase.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\pre-receive.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\prepare-commit-msg.sample" />
+    <Content Include="pytorch-openpose\.git\hooks\update.sample" />
+    <Content Include="pytorch-openpose\.git\index" />
+    <Content Include="pytorch-openpose\.git\info\exclude" />
+    <Content Include="pytorch-openpose\.git\logs\HEAD" />
+    <Content Include="pytorch-openpose\.git\logs\refs\heads\master" />
+    <Content Include="pytorch-openpose\.git\logs\refs\remotes\origin\HEAD" />
+    <Content Include="pytorch-openpose\.git\objects\pack\pack-d2cc4b711d91d1eb430ba8e66b06a17bb86ba6f8.idx" />
+    <Content Include="pytorch-openpose\.git\objects\pack\pack-d2cc4b711d91d1eb430ba8e66b06a17bb86ba6f8.pack" />
+    <Content Include="pytorch-openpose\.git\packed-refs" />
+    <Content Include="pytorch-openpose\.git\refs\heads\master" />
+    <Content Include="pytorch-openpose\.git\refs\remotes\origin\HEAD" />
+    <Content Include="pytorch-openpose\images\body_preview.jpg" />
+    <Content Include="pytorch-openpose\images\body_preview_estimation.jpg" />
+    <Content Include="pytorch-openpose\images\body_preview_keypoints.jpg" />
+    <Content Include="pytorch-openpose\images\demo.jpg" />
+    <Content Include="pytorch-openpose\images\demo_preview.png" />
+    <Content Include="pytorch-openpose\images\detect_hand_preview.jpg" />
+    <Content Include="pytorch-openpose\images\hand.jpg" />
+    <Content Include="pytorch-openpose\images\hand_preview.png" />
+    <Content Include="pytorch-openpose\images\hand_preview_estimation.png" />
+    <Content Include="pytorch-openpose\images\keypoints_hand.png" />
+    <Content Include="pytorch-openpose\images\keypoints_pose_18.png" />
+    <Content Include="pytorch-openpose\images\skeleton.jpg" />
+    <Content Include="pytorch-openpose\images\ski.jpg" />
+    <Content Include="pytorch-openpose\model\.gitkeep" />
+    <Content Include="pytorch-openpose\notebooks\detectHand.ipynb" />
+    <Content Include="pytorch-openpose\notebooks\hand.ipynb" />
+    <Content Include="pytorch-openpose\notebooks\network_graph.ipynb" />
+    <Content Include="pytorch-openpose\README.md" />
+    <Content Include="pytorch-openpose\requirements.txt" />
+    <Content Include="pytorch-openpose\src\hand_model_output_size.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
