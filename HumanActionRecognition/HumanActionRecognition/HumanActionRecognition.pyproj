@@ -22,10 +22,17 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="caffemodel2pytorch\caffemodel2pytorch.py" />
     <Compile Include="HumanActionRecognition.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|Miniconda3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="caffemodel2pytorch\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="caffemodel2pytorch\README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
