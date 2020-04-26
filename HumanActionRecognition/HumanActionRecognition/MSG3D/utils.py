@@ -1,4 +1,3 @@
-from graph import ntu_rgb_d
 
 def import_class(name):
     components = name.split('.')

@@ -19,9 +19,9 @@ from tqdm import tqdm
 #from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import MultiStepLR
 #import apex
-from model import msg3d
-
-from utils import count_params, import_class
+import utils
+from MSG3D.model import msg3d
+from MSG3D.graph import ntu_rgb_d
 
 
 
@@ -226,8 +226,6 @@ class RunningProcessor():
         self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
 
- 
-
     def __call__(self, input):
         input.cuda()
         out = model(input)
@@ -421,9 +419,9 @@ class Processor():
     def save_arg(self):
         # save arg
         arg_dict = vars(self.arg)
-        if not os.path.exists(self.arg.work_dir):
-            os.makedirs(self.arg.work_dir)
-        with open(os.path.join(self.arg.work_dir, 'config.yaml'), 'w') as f:
+        if not os.path.exists(self.arg["work_dir"]):
+            os.makedirs(self.arg["work_dir"])
+        with open(os.path.join(self.arg["work_dir"], 'config.yaml'), 'w') as f:
             yaml.dump(arg_dict, f)
 
     def print_time(self):
@@ -641,7 +639,7 @@ class Processor():
         torch.cuda.empty_cache()
 
     def start(self):
-        if self.arg.phase == 'train':
+        if self.arg["phase"] == 'train':
             self.print_log(f'Parameters:\n{pprint.pformat(vars(self.arg))}\n')
             self.print_log(f'Model total number of params: {count_params(self.model)}')
             self.global_step = self.arg.start_epoch * len(self.data_loader['train']) / self.arg.batch_size
@@ -661,10 +659,10 @@ class Processor():
             self.print_log(f'Forward Batch Size: {self.arg.forward_batch_size}')
             self.print_log(f'Test Batch Size: {self.arg.test_batch_size}')
 
-        elif self.arg.phase == 'test':
+        elif self.arg["phase"] == 'test':
             if not self.arg.test_feeder_args['debug']:
-                wf = os.path.join(self.arg.work_dir, 'wrong-samples.txt')
-                rf = os.path.join(self.arg.work_dir, 'right-samples.txt')
+                wf = os.path.join(self.arg["work_dir"], 'wrong-samples.txt')
+                rf = os.path.join(self.arg["work_dir"], 'right-samples.txt')
             else:
                 wf = rf = None
             if self.arg.weights is None:
@@ -682,6 +680,8 @@ class Processor():
             )
 
             self.print_log('Done.\n')
+        elif self.arg["phase"] == "run":
+            print_log("run phase")
 
 
 def str2bool(v):
@@ -694,10 +694,10 @@ def str2bool(v):
 
 
 def main():
-    emp_processor = RunningProcessor(r'D:\Repos\ntu120-xset-joint.pt')
+    temp_processor = RunningProcessor(r'D:\Repos\ntu120-xset-joint.pt')
     #parser = get_parser()
 
-    # load arg form config file
+    #load arg form config file
     #p = parser.parse_args()
     #if p.config is not None:
     #    with open(p.config, 'r') as f:
@@ -708,9 +708,11 @@ def main():
     #            print('WRONG ARG:', k)
     #            assert (k in key)
     #    parser.set_defaults(**default_arg)
-
+#
     #arg = parser.parse_args()
     #init_seed(arg.seed)
+    
+    
     #processor = Processor(arg)
     #processor.start()
 
