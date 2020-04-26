@@ -693,10 +693,29 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+def postprocessing(results):
+    index = results.data.max(1, keepdim=True)[1]
+    index = index.item() +1
+    switcher = {
+            23: "Handwaving",
+            24: "Kicking",
+            50: "Punch/Slap",
+            51: "Kicking",
+            52: "Pushing",
+            59: "Walking",
+            60: "Walking",
+            100: "Kicking",
+            102: "Kicking",
+            106: "Hit with object",
+            110: "Shoot with gun"    
+        }
+    return switcher.get(index, "Unknown Action")
+
 
 def main():
-    emp_processor = RunningProcessor(r'D:\Repos\ntu120-xset-joint.pt')
-    out = emp_processor(r'./MSG3D/data/Out/xset/val_data_joint.npy')
+    temp_processor = RunningProcessor(r'D:\Repos\ntu120-xset-joint.pt')
+    out = temp_processor(r'./MSG3D/data/Out/xset/val_data_joint.npy')
+    out = postprocessing(out)
     print(out)
     #parser = get_parser()
 
