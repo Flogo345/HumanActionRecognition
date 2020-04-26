@@ -8,7 +8,7 @@ from src import util
 from src.body import Body
 from src.hand import Hand
 
-body_estimation = Body(r'D:\Repos\HumanActionRecognition\HumanActionRecognition\HumanActionRecognition\Openpose\body_pose_model.pth')
+body_estimation = Body(r'D:\Repos\body_pose_model.pth')
 
 test_image = r'D:\Bilder\CatsVsDogs\dancing.jpg'
 oriImg = cv2.imread(test_image)  # B,G,R order

@@ -9,9 +9,8 @@ from PIL import Image
 from torch.autograd import Variable
 from os import listdir
 
-if os.path.isfile('./Openpose/body_pose_model.pth'):
-    model = torch.load ('./Openpose/body_pose_model.pth')
-    util
+if os.path.isfile(r'D:\Repos\ntu120-xset-joint.pt'):
+    model = torch.load (r'D:\Repos\ntu120-xset-joint.pt')
 
 
 model.eval()

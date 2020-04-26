@@ -23,6 +23,31 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="HumanActionRecognition.py" />
+    <Compile Include="MS-G3D\data_gen\gen_bone_data.py" />
+    <Compile Include="MS-G3D\data_gen\kinetics_gendata.py" />
+    <Compile Include="MS-G3D\data_gen\ntu120_gendata.py" />
+    <Compile Include="MS-G3D\data_gen\ntu_gendata.py" />
+    <Compile Include="MS-G3D\data_gen\preprocess.py" />
+    <Compile Include="MS-G3D\data_gen\rotation.py" />
+    <Compile Include="MS-G3D\data_gen\__init__.py" />
+    <Compile Include="MS-G3D\ensemble.py" />
+    <Compile Include="MS-G3D\feeders\feeder.py" />
+    <Compile Include="MS-G3D\feeders\tools.py" />
+    <Compile Include="MS-G3D\feeders\__init__.py" />
+    <Compile Include="MS-G3D\graph\kinetics.py" />
+    <Compile Include="MS-G3D\graph\ntu_rgb_d.py" />
+    <Compile Include="MS-G3D\graph\tools.py" />
+    <Compile Include="MS-G3D\graph\__init__.py" />
+    <Compile Include="MS-G3D\main.py" />
+    <Compile Include="MS-G3D\model\activation.py" />
+    <Compile Include="MS-G3D\model\mlp.py" />
+    <Compile Include="MS-G3D\model\msg3d.py" />
+    <Compile Include="MS-G3D\model\ms_gcn.py" />
+    <Compile Include="MS-G3D\model\ms_gtcn.py" />
+    <Compile Include="MS-G3D\model\ms_tcn.py" />
+    <Compile Include="MS-G3D\model\__init__.py" />
+    <Compile Include="MS-G3D\ntu_visualize.py" />
+    <Compile Include="MS-G3D\utils.py" />
     <Compile Include="pytorch-openpose\demo.py" />
     <Compile Include="pytorch-openpose\demo_camera.py" />
     <Compile Include="pytorch-openpose\src\body.py" />
@@ -36,6 +61,19 @@
     <InterpreterReference Include="CondaEnv|CondaEnv|Miniconda3" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="MS-G3D\" />
+    <Folder Include="MS-G3D\config\" />
+    <Folder Include="MS-G3D\config\kinetics-skeleton\" />
+    <Folder Include="MS-G3D\config\nturgbd-cross-subject\" />
+    <Folder Include="MS-G3D\config\nturgbd-cross-view\" />
+    <Folder Include="MS-G3D\config\nturgbd120-cross-setup\" />
+    <Folder Include="MS-G3D\config\nturgbd120-cross-subject\" />
+    <Folder Include="MS-G3D\data\" />
+    <Folder Include="MS-G3D\data\nturgbd_raw\" />
+    <Folder Include="MS-G3D\data_gen\" />
+    <Folder Include="MS-G3D\feeders\" />
+    <Folder Include="MS-G3D\graph\" />
+    <Folder Include="MS-G3D\model\" />
     <Folder Include="pytorch-openpose\" />
     <Folder Include="pytorch-openpose\.git\" />
     <Folder Include="pytorch-openpose\.git\hooks\" />
@@ -59,6 +97,32 @@
     <Folder Include="pytorch-openpose\src\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="MS-G3D\.gitignore" />
+    <Content Include="MS-G3D\config\kinetics-skeleton\test_bone.yaml" />
+    <Content Include="MS-G3D\config\kinetics-skeleton\test_joint.yaml" />
+    <Content Include="MS-G3D\config\kinetics-skeleton\train_bone.yaml" />
+    <Content Include="MS-G3D\config\kinetics-skeleton\train_joint.yaml" />
+    <Content Include="MS-G3D\config\nturgbd-cross-subject\test_bone.yaml" />
+    <Content Include="MS-G3D\config\nturgbd-cross-subject\test_joint.yaml" />
+    <Content Include="MS-G3D\config\nturgbd-cross-subject\train_bone.yaml" />
+    <Content Include="MS-G3D\config\nturgbd-cross-subject\train_joint.yaml" />
+    <Content Include="MS-G3D\config\nturgbd-cross-view\test_bone.yaml" />
+    <Content Include="MS-G3D\config\nturgbd-cross-view\test_joint.yaml" />
+    <Content Include="MS-G3D\config\nturgbd-cross-view\train_bone.yaml" />
+    <Content Include="MS-G3D\config\nturgbd-cross-view\train_joint.yaml" />
+    <Content Include="MS-G3D\config\nturgbd120-cross-setup\test_bone.yaml" />
+    <Content Include="MS-G3D\config\nturgbd120-cross-setup\test_joint.yaml" />
+    <Content Include="MS-G3D\config\nturgbd120-cross-setup\train_bone.yaml" />
+    <Content Include="MS-G3D\config\nturgbd120-cross-setup\train_joint.yaml" />
+    <Content Include="MS-G3D\config\nturgbd120-cross-subject\test_bone.yaml" />
+    <Content Include="MS-G3D\config\nturgbd120-cross-subject\test_joint.yaml" />
+    <Content Include="MS-G3D\config\nturgbd120-cross-subject\train_bone.yaml" />
+    <Content Include="MS-G3D\config\nturgbd120-cross-subject\train_joint.yaml" />
+    <Content Include="MS-G3D\data\nturgbd_raw\NTU_RGBD120_samples_with_missing_skeletons.txt" />
+    <Content Include="MS-G3D\data\nturgbd_raw\NTU_RGBD_samples_with_missing_skeletons.txt" />
+    <Content Include="MS-G3D\eval_pretrained.sh" />
+    <Content Include="MS-G3D\LICENSE" />
+    <Content Include="MS-G3D\README.md" />
     <Content Include="pytorch-openpose\.gitignore" />
     <Content Include="pytorch-openpose\.git\config" />
     <Content Include="pytorch-openpose\.git\description" />
