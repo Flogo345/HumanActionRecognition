@@ -3,7 +3,10 @@ sys.path.extend(['../'])
 
 from tqdm import tqdm
 
-from data_gen.rotation import *
+#from data_gen.rotation import *
+import rotation
+import numpy as np
+
 
 
 def pre_normalization(data, zaxis=[0, 1], xaxis=[8, 4]):
@@ -49,8 +52,8 @@ def pre_normalization(data, zaxis=[0, 1], xaxis=[8, 4]):
         joint_bottom = skeleton[0, 0, zaxis[0]]
         joint_top = skeleton[0, 0, zaxis[1]]
         axis = np.cross(joint_top - joint_bottom, [0, 0, 1])
-        angle = angle_between(joint_top - joint_bottom, [0, 0, 1])
-        matrix_z = rotation_matrix(axis, angle)
+        angle = rotation.angle_between(joint_top - joint_bottom, [0, 0, 1])
+        matrix_z = rotation.rotation_matrix(axis, angle)
         for i_p, person in enumerate(skeleton):
             if person.sum() == 0:
                 continue
@@ -67,8 +70,8 @@ def pre_normalization(data, zaxis=[0, 1], xaxis=[8, 4]):
         joint_rshoulder = skeleton[0, 0, xaxis[0]]
         joint_lshoulder = skeleton[0, 0, xaxis[1]]
         axis = np.cross(joint_rshoulder - joint_lshoulder, [1, 0, 0])
-        angle = angle_between(joint_rshoulder - joint_lshoulder, [1, 0, 0])
-        matrix_x = rotation_matrix(axis, angle)
+        angle = rotation.angle_between(joint_rshoulder - joint_lshoulder, [1, 0, 0])
+        matrix_x = rotation.rotation_matrix(axis, angle)
         for i_p, person in enumerate(skeleton):
             if person.sum() == 0:
                 continue

@@ -229,8 +229,9 @@ class RunningProcessor():
  
 
     def __call__(self, input):
-        input.cuda()
-        out = model(input)
+        input =  torch.from_numpy(np.load(input))
+        input = input.cuda()
+        out = self.model(input)
         return out
 
 class Processor():
@@ -695,6 +696,8 @@ def str2bool(v):
 
 def main():
     emp_processor = RunningProcessor(r'D:\Repos\ntu120-xset-joint.pt')
+    out = emp_processor(r'./MSG3D/data/Out/xset/val_data_joint.npy')
+    print(out)
     #parser = get_parser()
 
     # load arg form config file

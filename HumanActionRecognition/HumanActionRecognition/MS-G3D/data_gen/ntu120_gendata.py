@@ -8,7 +8,7 @@ import argparse
 import numpy as np
 from tqdm import tqdm
 
-from data_gen.preprocess import pre_normalization
+from preprocess import pre_normalization
 
 
 # NTU RGB+D Skeleton 120 Configurations: https://arxiv.org/pdf/1905.04757.pdf
@@ -157,19 +157,20 @@ def gendata(file_list, out_path, ignored_sample_path, benchmark, part):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='NTU-RGB-D 120 Skeleton Data Extraction')
-    parser.add_argument('--part1-path', default='../data/nturgbd_raw/nturgb+d_skeletons/')
-    parser.add_argument('--part2-path', default='../data/nturgbd_raw/nturgb+d_skeletons120/')
+    #parser.add_argument('--part1-path', default='../data/nturgbd_raw/nturgb+d_skeletons/')
+    #parser.add_argument('--part2-path', default='../data/nturgbd_raw/nturgb+d_skeletons120/')
+    parser.add_argument('--part1_path', default='./MSG3D/data/Skeleton')
     parser.add_argument('--ignored-sample-path',
-                        default='../data/nturgbd_raw/NTU_RGBD120_samples_with_missing_skeletons.txt')
-    parser.add_argument('--out-folder', default='../data/ntu120/')
+                        default='./MSG3D/data/nturgbd_raw/NTU_RGBD120_samples_with_missing_skeletons.txt')#../data/nturgbd_raw/NTU_RGBD120_samples_with_missing_skeletons.txt
+    parser.add_argument('--out-folder', default='./MSG3D/data/Out')
 
     benchmark = ['xsub', 'xset']
     part = ['train', 'val']
     arg = parser.parse_args()
-
+    print (arg.part1_path)
     # Combine skeleton file paths
     file_list = []
-    for folder in [arg.part1_path, arg.part2_path]:
+    for folder in [arg.part1_path]:#[arg.part1_path, arg.part2_path]:
         for path in os.listdir(folder):
             file_list.append((folder, path))
 
