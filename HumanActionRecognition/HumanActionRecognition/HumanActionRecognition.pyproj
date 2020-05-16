@@ -55,7 +55,7 @@
     <Compile Include="MSG3D\graph\ntu_rgb_d.py" />
     <Compile Include="MSG3D\graph\tools.py" />
     <Compile Include="MSG3D\graph\__init__.py" />
-    <Compile Include="MSG3D\runningProcessor.py" />
+    <Compile Include="MSG3D\msg3dRunningProcessor.py" />
     <Compile Include="MSG3D\model\activation.py" />
     <Compile Include="MSG3D\model\mlp.py" />
     <Compile Include="MSG3D\model\msg3d.py" />

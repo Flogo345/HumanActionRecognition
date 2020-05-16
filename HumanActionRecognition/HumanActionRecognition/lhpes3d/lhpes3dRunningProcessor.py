@@ -10,6 +10,27 @@ from lhpes3d.modules.draw import Plotter3d, draw_poses
 from lhpes3d.modules.parse_poses import parse_poses
 
 
+class LPES3DRunningProcessor():
+    def __init__(self, model_path, use_openvino=False, device='GPU'):
+        if use_openvino:
+            from lhpes3d.modules.inference_engine_openvino import InferenceEngineOpenVINO
+            self.model = InferenceEngineOpenVINO(model_path, device)
+        else:
+            from lhpes3d.modules.inference_engine_pytorch import InferenceEnginePyTorch
+            self.model = InferenceEnginePyTorch(model_path, device)
+
+        if torch.cuda.is_available():
+            self.model = self.model.cuda()
+
+        
+
+    def __call__(self, scaled_img):
+        out = self.model.infer(input)
+        return out
+
+
+
+
 def rotate_poses(poses_3d, R, t):
     R_inv = np.linalg.inv(R)
     for pose_id in range(len(poses_3d)):
@@ -53,6 +74,7 @@ if __name__ == '__main__':
     if args.video == '' and args.images == '':
         raise ValueError('Either --video or --image has to be provided')
 
+    #Initialize model (net)
     stride = 8
     if args.use_openvino:
         from lhpes3d.modules.inference_engine_openvino import InferenceEngineOpenVINO
@@ -60,8 +82,6 @@ if __name__ == '__main__':
     else:
         from lhpes3d.modules.inference_engine_pytorch import InferenceEnginePyTorch
         net = InferenceEnginePyTorch(args.model, args.device)
-
-    print("Reached checkpoint1")
 
     canvas_3d = np.zeros((720, 1280, 3), dtype=np.uint8)
     plotter = Plotter3d(canvas_3d.shape[:2])
@@ -77,7 +97,7 @@ if __name__ == '__main__':
     R = np.array(extrinsics['R'], dtype=np.float32)
     t = np.array(extrinsics['t'], dtype=np.float32)
 
-
+    #Frameprovider (for video)
     frame_provider = ImageReader(args.images)
     is_video = False
     if args.video != '':
@@ -91,6 +111,9 @@ if __name__ == '__main__':
     p_code = 112
     space_code = 32
     mean_time = 0
+
+
+    #Main running loop
     for frame in frame_provider:
         current_time = cv2.getTickCount()
         if frame is None:
@@ -101,6 +124,7 @@ if __name__ == '__main__':
         if fx < 0:  # Focal length is unknown
             fx = np.float32(0.8 * frame.shape[1])
 
+        #Determin Value with model (net)
         inference_result = net.infer(scaled_img)
         poses_3d, poses_2d = parse_poses(inference_result, input_scale, stride, fx, is_video)
         edges = []
@@ -126,6 +150,8 @@ if __name__ == '__main__':
         cv2.putText(frame, 'FPS: {}'.format(int(1 / mean_time * 10) / 10),
                     (40, 80), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255))
         cv2.imshow('ICV 3D Human Pose Estimation', frame)
+
+        #Place for MSG3D
 
         key = cv2.waitKey(delay)
         if key == esc_code:

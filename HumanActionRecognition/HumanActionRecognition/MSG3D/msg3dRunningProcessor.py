@@ -218,7 +218,7 @@ def get_parser():
     return parser
 
 
-class RunningProcessor():
+class MSG3DRunningProcessor():
     def __init__(self, model_path):
         self.model = msg3d.Model(120, 25, 2, 13, 6, ".graph.ntu_rgb_d.AdjMatrixGraph")
         if torch.cuda.is_available():
