@@ -11,9 +11,11 @@ from os import listdir
 from MSG3D.runningProcessor import RunningProcessor
 import numpy as np
 
-
+#Initialization
 msg3d = RunningProcessor(r'D:\Repos\ntu120-xset-joint.pt')
 
+
+#Pipeline
 input =  torch.from_numpy(np.load(r'./MSG3D/data/Out/xset/val_data_joint.npy'))
 if torch.cuda.is_available():
     input = input.cuda()
@@ -22,18 +24,18 @@ out = msg3d(input)
 print(out)
 
 
+def todelete ():
+    if os.path.isfile(r'D:\Repos\ntu120-xset-joint.pt'):
+        model = torch.load (r'D:\Repos\ntu120-xset-joint.pt')
 
-if os.path.isfile(r'D:\Repos\ntu120-xset-joint.pt'):
-    model = torch.load (r'D:\Repos\ntu120-xset-joint.pt')
 
+    model.eval()
+    torch.set_grad_enabled(False)
+    img = Image.open('random.jpg')
+    out = model(img)
 
-model.eval()
-torch.set_grad_enabled(False)
-img = Image.open('random.jpg')
-out = model(img)
-
-print (out)
-#input = get_input()
-#input = preprocess_input(input)
-#model.eval()
-#out = model(input)
+    print (out)
+    #input = get_input()
+    #input = preprocess_input(input)
+    #model.eval()
+    #out = model(input)
