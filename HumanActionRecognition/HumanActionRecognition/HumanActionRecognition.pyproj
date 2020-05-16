@@ -23,7 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="HumanActionRecognition.py" />
-    <Compile Include="lhpes3d\demo.py" />
+    <Compile Include="lhpes3d\lhpes3dRunningProcessor.py" />
     <Compile Include="lhpes3d\models\with_mobilenet.py" />
     <Compile Include="lhpes3d\models\__init__.py" />
     <Compile Include="lhpes3d\modules\conv.py" />
