@@ -23,6 +23,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="HumanActionRecognition.py" />
+    <Compile Include="lhpes3d\demo.py" />
+    <Compile Include="lhpes3d\models\with_mobilenet.py" />
+    <Compile Include="lhpes3d\models\__init__.py" />
+    <Compile Include="lhpes3d\modules\conv.py" />
+    <Compile Include="lhpes3d\modules\draw.py" />
+    <Compile Include="lhpes3d\modules\inference_engine_openvino.py" />
+    <Compile Include="lhpes3d\modules\inference_engine_pytorch.py" />
+    <Compile Include="lhpes3d\modules\input_reader.py" />
+    <Compile Include="lhpes3d\modules\legacy_pose_extractor.py" />
+    <Compile Include="lhpes3d\modules\load_state.py" />
+    <Compile Include="lhpes3d\modules\one_euro_filter.py" />
+    <Compile Include="lhpes3d\modules\parse_poses.py" />
+    <Compile Include="lhpes3d\modules\pose.py" />
+    <Compile Include="lhpes3d\modules\__init__.py" />
+    <Compile Include="lhpes3d\scripts\convert_to_onnx.py" />
+    <Compile Include="lhpes3d\setup.py" />
+    <Compile Include="lhpes3d\__init__.py" />
     <Compile Include="MSG3D\data_gen\gen_bone_data.py" />
     <Compile Include="MSG3D\data_gen\kinetics_gendata.py" />
     <Compile Include="MSG3D\data_gen\ntu120_gendata.py" />
@@ -51,19 +68,21 @@
     <Compile Include="MSG3D\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="pytorch-openpose\demo.py" />
-    <Compile Include="pytorch-openpose\demo_camera.py" />
-    <Compile Include="pytorch-openpose\src\body.py" />
-    <Compile Include="pytorch-openpose\src\hand.py" />
-    <Compile Include="pytorch-openpose\src\hand_model_outputsize.py" />
-    <Compile Include="pytorch-openpose\src\model.py" />
-    <Compile Include="pytorch-openpose\src\util.py" />
-    <Compile Include="pytorch-openpose\src\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|Miniconda3" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="lhpes3d\" />
+    <Folder Include="lhpes3d\.vs\" />
+    <Folder Include="lhpes3d\.vs\lightweight-human-pose-estimation-3d-demo.pytorch-master\" />
+    <Folder Include="lhpes3d\.vs\lightweight-human-pose-estimation-3d-demo.pytorch-master\v16\" />
+    <Folder Include="lhpes3d\data\" />
+    <Folder Include="lhpes3d\models\" />
+    <Folder Include="lhpes3d\modules\" />
+    <Folder Include="lhpes3d\pose_extractor\" />
+    <Folder Include="lhpes3d\pose_extractor\src\" />
+    <Folder Include="lhpes3d\scripts\" />
     <Folder Include="MSG3D\" />
     <Folder Include="MSG3D\config\" />
     <Folder Include="MSG3D\config\kinetics-skeleton\" />
@@ -81,29 +100,26 @@
     <Folder Include="MSG3D\feeders\" />
     <Folder Include="MSG3D\graph\" />
     <Folder Include="MSG3D\model\" />
-    <Folder Include="pytorch-openpose\" />
-    <Folder Include="pytorch-openpose\.git\" />
-    <Folder Include="pytorch-openpose\.git\hooks\" />
-    <Folder Include="pytorch-openpose\.git\info\" />
-    <Folder Include="pytorch-openpose\.git\logs\" />
-    <Folder Include="pytorch-openpose\.git\logs\refs\" />
-    <Folder Include="pytorch-openpose\.git\logs\refs\heads\" />
-    <Folder Include="pytorch-openpose\.git\logs\refs\remotes\" />
-    <Folder Include="pytorch-openpose\.git\logs\refs\remotes\origin\" />
-    <Folder Include="pytorch-openpose\.git\objects\" />
-    <Folder Include="pytorch-openpose\.git\objects\info\" />
-    <Folder Include="pytorch-openpose\.git\objects\pack\" />
-    <Folder Include="pytorch-openpose\.git\refs\" />
-    <Folder Include="pytorch-openpose\.git\refs\heads\" />
-    <Folder Include="pytorch-openpose\.git\refs\remotes\" />
-    <Folder Include="pytorch-openpose\.git\refs\remotes\origin\" />
-    <Folder Include="pytorch-openpose\.git\refs\tags\" />
-    <Folder Include="pytorch-openpose\images\" />
-    <Folder Include="pytorch-openpose\model\" />
-    <Folder Include="pytorch-openpose\notebooks\" />
-    <Folder Include="pytorch-openpose\src\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lhpes3d\.gitignore" />
+    <Content Include="lhpes3d\.vs\lightweight-human-pose-estimation-3d-demo.pytorch-master\v16\.suo" />
+    <Content Include="lhpes3d\.vs\slnx.sqlite" />
+    <Content Include="lhpes3d\.vs\VSWorkspaceState.json" />
+    <Content Include="lhpes3d\CONTRIBUTORS.md" />
+    <Content Include="lhpes3d\data\extrinsics.json" />
+    <Content Include="lhpes3d\data\human_pose_estimation_3d_demo.jpg" />
+    <Content Include="lhpes3d\LICENSE" />
+    <Content Include="lhpes3d\pose_extractor\CMakeLists.txt" />
+    <Content Include="lhpes3d\pose_extractor\src\extract_poses.cpp" />
+    <Content Include="lhpes3d\pose_extractor\src\extract_poses.hpp" />
+    <Content Include="lhpes3d\pose_extractor\src\human_pose.cpp" />
+    <Content Include="lhpes3d\pose_extractor\src\human_pose.hpp" />
+    <Content Include="lhpes3d\pose_extractor\src\peak.cpp" />
+    <Content Include="lhpes3d\pose_extractor\src\peak.hpp" />
+    <Content Include="lhpes3d\pose_extractor\wrapper.cpp" />
+    <Content Include="lhpes3d\README.md" />
+    <Content Include="lhpes3d\requirements.txt" />
     <Content Include="MSG3D\config\kinetics-skeleton\test_bone.yaml" />
     <Content Include="MSG3D\config\kinetics-skeleton\test_joint.yaml" />
     <Content Include="MSG3D\config\kinetics-skeleton\train_bone.yaml" />
@@ -139,52 +155,6 @@
     <Content Include="MSG3D\eval_pretrained.sh" />
     <Content Include="MSG3D\LICENSE" />
     <Content Include="MSG3D\README.md" />
-    <Content Include="pytorch-openpose\.gitignore" />
-    <Content Include="pytorch-openpose\.git\config" />
-    <Content Include="pytorch-openpose\.git\description" />
-    <Content Include="pytorch-openpose\.git\HEAD" />
-    <Content Include="pytorch-openpose\.git\hooks\applypatch-msg.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\commit-msg.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\fsmonitor-watchman.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\post-update.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\pre-applypatch.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\pre-commit.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\pre-merge-commit.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\pre-push.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\pre-rebase.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\pre-receive.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\prepare-commit-msg.sample" />
-    <Content Include="pytorch-openpose\.git\hooks\update.sample" />
-    <Content Include="pytorch-openpose\.git\index" />
-    <Content Include="pytorch-openpose\.git\info\exclude" />
-    <Content Include="pytorch-openpose\.git\logs\HEAD" />
-    <Content Include="pytorch-openpose\.git\logs\refs\heads\master" />
-    <Content Include="pytorch-openpose\.git\logs\refs\remotes\origin\HEAD" />
-    <Content Include="pytorch-openpose\.git\objects\pack\pack-d2cc4b711d91d1eb430ba8e66b06a17bb86ba6f8.idx" />
-    <Content Include="pytorch-openpose\.git\objects\pack\pack-d2cc4b711d91d1eb430ba8e66b06a17bb86ba6f8.pack" />
-    <Content Include="pytorch-openpose\.git\packed-refs" />
-    <Content Include="pytorch-openpose\.git\refs\heads\master" />
-    <Content Include="pytorch-openpose\.git\refs\remotes\origin\HEAD" />
-    <Content Include="pytorch-openpose\images\body_preview.jpg" />
-    <Content Include="pytorch-openpose\images\body_preview_estimation.jpg" />
-    <Content Include="pytorch-openpose\images\body_preview_keypoints.jpg" />
-    <Content Include="pytorch-openpose\images\demo.jpg" />
-    <Content Include="pytorch-openpose\images\demo_preview.png" />
-    <Content Include="pytorch-openpose\images\detect_hand_preview.jpg" />
-    <Content Include="pytorch-openpose\images\hand.jpg" />
-    <Content Include="pytorch-openpose\images\hand_preview.png" />
-    <Content Include="pytorch-openpose\images\hand_preview_estimation.png" />
-    <Content Include="pytorch-openpose\images\keypoints_hand.png" />
-    <Content Include="pytorch-openpose\images\keypoints_pose_18.png" />
-    <Content Include="pytorch-openpose\images\skeleton.jpg" />
-    <Content Include="pytorch-openpose\images\ski.jpg" />
-    <Content Include="pytorch-openpose\model\.gitkeep" />
-    <Content Include="pytorch-openpose\notebooks\detectHand.ipynb" />
-    <Content Include="pytorch-openpose\notebooks\hand.ipynb" />
-    <Content Include="pytorch-openpose\notebooks\network_graph.ipynb" />
-    <Content Include="pytorch-openpose\README.md" />
-    <Content Include="pytorch-openpose\requirements.txt" />
-    <Content Include="pytorch-openpose\src\hand_model_output_size.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
