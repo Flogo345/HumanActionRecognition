@@ -6,10 +6,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-from model.ms_tcn import MultiScale_TemporalConv as MS_TCN
-from model.mlp import MLP
-from model.activation import activation_factory
-from graph.tools import k_adjacency, normalize_adjacency_matrix
+from MSG3D.model.ms_tcn import MultiScale_TemporalConv as MS_TCN
+from MSG3D.model.mlp import MLP
+from MSG3D.model.activation import activation_factory
+from MSG3D.graph.tools import k_adjacency, normalize_adjacency_matrix
 
 
 class UnfoldTemporalWindows(nn.Module):
@@ -18,7 +18,7 @@ class UnfoldTemporalWindows(nn.Module):
         self.window_size = window_size
         self.window_stride = window_stride
         self.window_dilation = window_dilation
-
+        
         self.padding = (window_size + (window_size-1) * (window_dilation-1) - 1) // 2
         self.unfold = nn.Unfold(kernel_size=(self.window_size, 1),
                                 dilation=(self.window_dilation, 1),

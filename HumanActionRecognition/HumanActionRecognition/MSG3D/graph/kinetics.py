@@ -4,7 +4,7 @@ sys.path.extend(['../'])
 
 import numpy as np
 
-from graph import tools
+from . import tools
 
 # Joint index:
 # {0,  "Nose"}

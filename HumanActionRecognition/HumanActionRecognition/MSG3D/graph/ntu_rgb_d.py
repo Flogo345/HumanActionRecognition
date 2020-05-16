@@ -4,7 +4,7 @@ sys.path.extend(['../'])
 
 import numpy as np
 
-from graph import tools
+from . import tools
 
 num_node = 25
 self_link = [(i, i) for i in range(num_node)]
@@ -25,6 +25,8 @@ class AdjMatrixGraph:
         self.A_binary = tools.get_adjacency_matrix(self.edges, self.num_nodes)
         self.A_binary_with_I = tools.get_adjacency_matrix(self.edges + self.self_loops, self.num_nodes)
         self.A = tools.normalize_adjacency_matrix(self.A_binary)
+    def __getattr__(self, name):
+        return self
 
 
 if __name__ == '__main__':

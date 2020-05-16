@@ -1,9 +1,12 @@
+from importlib import import_module
+
 
 def import_class(name):
     components = name.split('.')
-    mod = __import__(components[0])
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
+    #mod = __import__(components[0])
+    mod = import_module(components[0] + "." + components[1] + "." + components[2], __package__)
+    for comp in components[3:]:
+        mod = getattr(mod, comp, None)
     return mod
 
 

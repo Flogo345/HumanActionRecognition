@@ -7,12 +7,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from utils import import_class, count_params #import utils #
-from MSG3D.model import ms_gcn #from model.ms_gcn import MultiScale_GraphConv as MS_GCN
-from MSG3D.model import ms_tcn #from model.ms_tcn import MultiScale_TemporalConv as MS_TCN
-from MSG3D.model import ms_gtcn #from model.ms_gtcn import SpatialTemporal_MS_GCN, UnfoldTemporalWindows
-from MSG3D.model import mlp #from model.mlp import MLP
-from MSG3D.model import activation #from model.activation import activation_factory
+from MSG3D.utils import import_class, count_params #
+from MSG3D.model.ms_gcn import MultiScale_GraphConv as MS_GCN #from MSG3D.model import ms_gcn #
+from MSG3D.model.ms_tcn import MultiScale_TemporalConv as MS_TCN #from MSG3D.model import ms_tcn #
+from MSG3D.model.ms_gtcn import SpatialTemporal_MS_GCN, UnfoldTemporalWindows #from MSG3D.model import ms_gtcn #
+from MSG3D.model.mlp import MLP #from MSG3D.model import mlp #
+from MSG3D.model.activation import activation_factory #from MSG3D.model import activation #
 
 
 class MS_G3D(nn.Module):
@@ -40,8 +40,8 @@ class MS_G3D(nn.Module):
             self.in1x1 = MLP(in_channels, [self.embed_channels_in])
 
         self.gcn3d = nn.Sequential(
-            ms_gtcn.UnfoldTemporalWindows(window_size, window_stride, window_dilation),
-            ms_gtcn.SpatialTemporal_MS_GCN(
+            UnfoldTemporalWindows(window_size, window_stride, window_dilation),
+            SpatialTemporal_MS_GCN(
                 in_channels=self.embed_channels_in,
                 out_channels=self.embed_channels_out,
                 A_binary=A_binary,

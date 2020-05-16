@@ -19,9 +19,9 @@ from tqdm import tqdm
 #from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import MultiStepLR
 #import apex
-from model import msg3d
-
-from utils import count_params, import_class
+import utils
+from MSG3D.model import msg3d
+from MSG3D.graph import ntu_rgb_d
 
 
 
@@ -220,19 +220,35 @@ def get_parser():
 
 class RunningProcessor():
     def __init__(self, model_path):
-        self.model = msg3d.Model(120, 25, 2, 13, 6, "ntu_rgb_d.AdjMatrixGraph")
+        self.model = msg3d.Model(120, 25, 2, 13, 6, ".graph.ntu_rgb_d.AdjMatrixGraph")
         if torch.cuda.is_available():
             self.model = self.model.cuda()
         self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
 
- 
-
     def __call__(self, input):
-        input =  torch.from_numpy(np.load(input))
-        input = input.cuda()
         out = self.model(input)
+        out = self.postprocessing(out)
         return out
+
+    def postprocessing(self, results):
+        index = results.data.max(1, keepdim=True)[1]
+        index = index.item() +1
+        switcher = {
+                23: "Handwaving",
+                24: "Kicking",
+                50: "Punch/Slap",
+                51: "Kicking",
+                52: "Pushing",
+                59: "Walking",
+                60: "Walking",
+                100: "Kicking",
+                102: "Kicking",
+                106: "Hit with object",
+                110: "Shoot with gun"    
+            }
+        return switcher.get(index, "Unknown Action")
+
 
 class Processor():
     """Processor for Skeleton-based Action Recgnition"""
@@ -422,9 +438,9 @@ class Processor():
     def save_arg(self):
         # save arg
         arg_dict = vars(self.arg)
-        if not os.path.exists(self.arg.work_dir):
-            os.makedirs(self.arg.work_dir)
-        with open(os.path.join(self.arg.work_dir, 'config.yaml'), 'w') as f:
+        if not os.path.exists(self.arg["work_dir"]):
+            os.makedirs(self.arg["work_dir"])
+        with open(os.path.join(self.arg["work_dir"], 'config.yaml'), 'w') as f:
             yaml.dump(arg_dict, f)
 
     def print_time(self):
@@ -642,7 +658,7 @@ class Processor():
         torch.cuda.empty_cache()
 
     def start(self):
-        if self.arg.phase == 'train':
+        if self.arg["phase"] == 'train':
             self.print_log(f'Parameters:\n{pprint.pformat(vars(self.arg))}\n')
             self.print_log(f'Model total number of params: {count_params(self.model)}')
             self.global_step = self.arg.start_epoch * len(self.data_loader['train']) / self.arg.batch_size
@@ -662,10 +678,10 @@ class Processor():
             self.print_log(f'Forward Batch Size: {self.arg.forward_batch_size}')
             self.print_log(f'Test Batch Size: {self.arg.test_batch_size}')
 
-        elif self.arg.phase == 'test':
+        elif self.arg["phase"] == 'test':
             if not self.arg.test_feeder_args['debug']:
-                wf = os.path.join(self.arg.work_dir, 'wrong-samples.txt')
-                rf = os.path.join(self.arg.work_dir, 'right-samples.txt')
+                wf = os.path.join(self.arg["work_dir"], 'wrong-samples.txt')
+                rf = os.path.join(self.arg["work_dir"], 'right-samples.txt')
             else:
                 wf = rf = None
             if self.arg.weights is None:
@@ -683,6 +699,8 @@ class Processor():
             )
 
             self.print_log('Done.\n')
+        elif self.arg["phase"] == "run":
+            print_log("run phase")
 
 
 def str2bool(v):
@@ -693,49 +711,3 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
-def postprocessing(results):
-    index = results.data.max(1, keepdim=True)[1]
-    index = index.item() +1
-    switcher = {
-            23: "Handwaving",
-            24: "Kicking",
-            50: "Punch/Slap",
-            51: "Kicking",
-            52: "Pushing",
-            59: "Walking",
-            60: "Walking",
-            100: "Kicking",
-            102: "Kicking",
-            106: "Hit with object",
-            110: "Shoot with gun"    
-        }
-    return switcher.get(index, "Unknown Action")
-
-
-def main():
-    temp_processor = RunningProcessor(r'D:\Repos\ntu120-xset-joint.pt')
-    out = temp_processor(r'./MSG3D/data/Out/xset/val_data_joint.npy')
-    out = postprocessing(out)
-    print(out)
-    #parser = get_parser()
-
-    # load arg form config file
-    #p = parser.parse_args()
-    #if p.config is not None:
-    #    with open(p.config, 'r') as f:
-    #        default_arg = yaml.load(f)
-    #    key = vars(p).keys()
-    #    for k in default_arg.keys():
-    #        if k not in key:
-    #            print('WRONG ARG:', k)
-    #            assert (k in key)
-    #    parser.set_defaults(**default_arg)
-
-    #arg = parser.parse_args()
-    #init_seed(arg.seed)
-    #processor = Processor(arg)
-    #processor.start()
-
-
-if __name__ == '__main__':
-    main()
