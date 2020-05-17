@@ -3,7 +3,7 @@ sys.path.extend(['../'])
 
 from tqdm import tqdm
 
-from data_gen.rotation import *
+from MSG3D.data_gen.rotation import *
 
 
 def pre_normalization(data, zaxis=[0, 1], xaxis=[8, 4]):

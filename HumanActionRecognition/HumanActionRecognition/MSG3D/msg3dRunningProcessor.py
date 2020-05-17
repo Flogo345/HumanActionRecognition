@@ -234,12 +234,14 @@ class MSG3DRunningProcessor():
     def postprocessing(self, results):
         index = results.data.max(1, keepdim=True)[1]
         index = index.item() +1
+        print(index)
         switcher = {
                 23: "Handwaving",
                 24: "Kicking",
                 50: "Punch/Slap",
                 51: "Kicking",
                 52: "Pushing",
+                58: "Handshake", #TODO: delete
                 59: "Walking",
                 60: "Walking",
                 100: "Kicking",

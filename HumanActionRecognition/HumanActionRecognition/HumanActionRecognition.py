@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import random
+import threading
 from torchvision import transforms
 from PIL import Image
 from torch.autograd import Variable
@@ -15,10 +16,12 @@ import numpy as np
 import cv2
 
 from MSG3D.msg3dRunningProcessor import MSG3DRunningProcessor
+import MSG3D.data_gen.preprocess as preprocess
 from lhpes3d.lhpes3dRunningProcessor import LPES3DRunningProcessor, rotate_poses
 from lhpes3d.modules.input_reader import VideoReader
 from lhpes3d.modules.draw import Plotter3d, draw_poses
 from lhpes3d.modules.parse_poses import parse_poses
+
 
 
 
@@ -38,7 +41,7 @@ def msg3dTest():
 
 def humanActionRecognition():
     #Initialization
-    video = 0 #video = r'D:\Repos\HumanActionRecognition\Boxing_03Videvo.mov' #video = 0; #
+    video = r'D:\Repos\HumanActionRecognition\A58_RGB.mp4' #video = 0; #
     height_size = 256
     fx = -1
     lpes3d_model_path = r'..\..\..\human-pose-estimation-3d.pth'
@@ -63,7 +66,7 @@ def humanActionRecognition():
 
     #Frameprovider (for stream)
     #frame_provider = VideoReader(video)
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(video)
     #cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     #cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
@@ -76,10 +79,19 @@ def humanActionRecognition():
     space_code = 32
     mean_time = 0
 
+    buffer_init_time = 2
+    buffer_time = cv2.getTickCount() 
+    init_buffer_over = False
+    buffer = []
+    joint_map_msg3d_lhpes3d = [2, -1, 0, 1, 3, 4, 5, 5, 9, 10, 11, 11, 6, 7, 8, 8, 12, 13, 14, 14, -2, 5, 5, 11, 11] 
+    msg3d_calculate_frame = 10
+
    
+    msg3d_count = 0
     #Main running loop
     #for frame in frame_provider:
     while True:
+        msg3d_count = (msg3d_count + 1) % msg3d_calculate_frame
         ret_val, frame = cam.read()
         current_time = cv2.getTickCount()
         if frame is None:
@@ -107,6 +119,35 @@ def humanActionRecognition():
         plotter.plot(canvas_3d, poses_3d, edges)
         cv2.imshow(canvas_3d_window_name, canvas_3d)
 
+
+
+        #Place for MSG3D
+        buffer.append(poses_3d)
+        if (len(buffer) > 45 and msg3d_count == 0 ):
+            buffer.pop(0)
+            init_buffer_over = True
+            msg3d_input = np.zeros(shape=(1, 3, len(buffer), 25, 2), dtype= np.float)
+            for chanels in range(len(msg3d_input[0])):
+                for frame in range(len(msg3d_input[0][chanels])):
+                    for joint in range(len(msg3d_input[0][chanels][frame])):
+                        if (len(buffer[frame]) > 0):
+                            persons_arr = np.zeros(shape=(2))
+                            msg3d_input[0][chanels][frame][joint] = persons_arr
+                            for person in range(min(len(buffer[frame]), 2)):
+                                index_to_read = joint_map_msg3d_lhpes3d[joint]
+                                if (index_to_read == -1):
+                                    msg3d_input[0][chanels][frame][joint][person] = buffer[frame][person][2][chanels] + 0.5 * ((buffer[frame][person][9][chanels] + 0.5 * (buffer[frame][person][3][chanels] - buffer[frame][person][9][chanels])) - buffer[frame][person][2][chanels])
+                                elif (index_to_read == -2):
+                                    msg3d_input[0][chanels][frame][joint][person] = buffer[frame][person][9][chanels] + 0.5 * (buffer[frame][person][3][chanels] - buffer[frame][person][9][chanels])
+                                else:
+                                    msg3d_input[0][chanels][frame][joint][person] = buffer[frame][person][index_to_read][chanels]
+            msg3d_input = preprocess.pre_normalization(msg3d_input)
+            msg3d_input = torch.from_numpy(msg3d_input)
+            msg3d_input = msg3d_input.float().cuda()
+            out = msg3d_model(msg3d_input)
+            print(out)
+            
+
         draw_poses(frame, poses_2d)
         current_time = (cv2.getTickCount() - current_time) / cv2.getTickFrequency()
         if mean_time == 0:
@@ -116,10 +157,7 @@ def humanActionRecognition():
         cv2.putText(frame, 'FPS: {}'.format(int(1 / mean_time * 10) / 10),
                     (40, 80), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255))
         cv2.imshow('ICV 3D Human Pose Estimation', frame)
-
-        #Place for MSG3D
-
-
+            
 
         key = cv2.waitKey(delay)
         if key == esc_code:
