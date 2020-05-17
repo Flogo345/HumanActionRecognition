@@ -144,14 +144,15 @@ def humanActionRecognition():
                                     msg3d_input[0][chanels][frame][joint][person] = buffer[frame][person][index_to_read][chanels] / 1
             skeleton_file = ""
             skeleton_file += str(len(buffer)) + "\n"
-            temp_frame = frame
-            for temp_frame in buffer:
-                skeleton_file += str(len(temp_frame)) + "\n"
-                for person in temp_frame:
+            for temp_frame in range(len(buffer)):
+                skeleton_file += str(len(buffer[temp_frame])) + "\n"
+                for person in range(len(buffer[temp_frame])):
                     skeleton_file += "0 0 0 0 0 0 0 0 0 0" + "\n"
-                    skeleton_file += str(len(person)) + "\n"
-                    for joint in person:
-                        skeleton_file += str(joint[0]) + " " + str(joint[1]) + " " + str(joint[2]) + " 0 0 0 0 0 0 0 0 0\n"
+                    skeleton_file += str(len(buffer[temp_frame][person])) + "\n"
+                    for joint in range(len(msg3d_input[0][0][temp_frame])):
+                        for channel in msg3d_input[0]:
+                            skeleton_file += str(channel[temp_frame][joint][person]) + " "
+                        skeleton_file += "0 0 0 0 0 0 0 0 0\n"
             write_file("skeleton.skeleton", skeleton_file)
 
             np.set_printoptions(threshold=sys.maxsize)
