@@ -9,6 +9,7 @@ from torchvision import transforms
 from PIL import Image
 from torch.autograd import Variable
 from os import listdir
+import sys
 
 from argparse import ArgumentParser
 import json
@@ -41,7 +42,7 @@ def msg3dTest():
 
 def humanActionRecognition():
     #Initialization
-    video = r'D:\Repos\HumanActionRecognition\A58_RGB.mp4' #video = 0; #
+    video = r'D:\Repos\HumanActionRecognition\ballthrow.mp4' #video = 0; #
     height_size = 256
     fx = -1
     lpes3d_model_path = r'..\..\..\human-pose-estimation-3d.pth'
@@ -136,12 +137,14 @@ def humanActionRecognition():
                             for person in range(min(len(buffer[frame]), 2)):
                                 index_to_read = joint_map_msg3d_lhpes3d[joint]
                                 if (index_to_read == -1):
-                                    msg3d_input[0][chanels][frame][joint][person] = buffer[frame][person][2][chanels] + 0.5 * ((buffer[frame][person][9][chanels] + 0.5 * (buffer[frame][person][3][chanels] - buffer[frame][person][9][chanels])) - buffer[frame][person][2][chanels])
+                                    msg3d_input[0][chanels][frame][joint][person] = (buffer[frame][person][2][chanels] + 0.5 * ((buffer[frame][person][9][chanels] + 0.5 * (buffer[frame][person][3][chanels] - buffer[frame][person][9][chanels])) - buffer[frame][person][2][chanels])) / 1
                                 elif (index_to_read == -2):
-                                    msg3d_input[0][chanels][frame][joint][person] = buffer[frame][person][9][chanels] + 0.5 * (buffer[frame][person][3][chanels] - buffer[frame][person][9][chanels])
+                                    msg3d_input[0][chanels][frame][joint][person] = (buffer[frame][person][9][chanels] + 0.5 * (buffer[frame][person][3][chanels] - buffer[frame][person][9][chanels])) / 1
                                 else:
-                                    msg3d_input[0][chanels][frame][joint][person] = buffer[frame][person][index_to_read][chanels]
-            msg3d_input = preprocess.pre_normalization(msg3d_input)
+                                    msg3d_input[0][chanels][frame][joint][person] = buffer[frame][person][index_to_read][chanels] / 1
+            
+            np.set_printoptions(threshold=sys.maxsize)
+            #msg3d_input = preprocess.pre_normalization(msg3d_input)
             msg3d_input = torch.from_numpy(msg3d_input)
             msg3d_input = msg3d_input.float().cuda()
             out = msg3d_model(msg3d_input)
@@ -180,6 +183,10 @@ def humanActionRecognition():
             else:
                 delay = 1
 
+def write_file(name, text):
+    f = open(name, "a")
+    f.write(text)
+    f.close()
 
 
 
