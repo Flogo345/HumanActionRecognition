@@ -4,6 +4,7 @@ import os
 
 import cv2
 import numpy as np
+import torch
 
 from lhpes3d.modules.input_reader import VideoReader, ImageReader
 from lhpes3d.modules.draw import Plotter3d, draw_poses
@@ -19,13 +20,13 @@ class LPES3DRunningProcessor():
             from lhpes3d.modules.inference_engine_pytorch import InferenceEnginePyTorch
             self.model = InferenceEnginePyTorch(model_path, device)
 
-        if torch.cuda.is_available():
-            self.model = self.model.cuda()
+        #if torch.cuda.is_available():
+        #    self.model = self.model.cuda()
 
         
 
     def __call__(self, scaled_img):
-        out = self.model.infer(input)
+        out = self.model.infer(scaled_img)
         return out
 
 
@@ -41,7 +42,8 @@ def rotate_poses(poses_3d, R, t):
     return poses_3d
 
 
-if __name__ == '__main__':
+
+def lhpes3d_demo():
     print("Started")
 
     parser = ArgumentParser(description='Lightweight 3D human pose estimation demo. '
@@ -173,3 +175,6 @@ if __name__ == '__main__':
                 break
             else:
                 delay = 1
+
+#if __name__ == '__main__':
+#    lhpes3d_demo()

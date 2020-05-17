@@ -38,7 +38,6 @@
     <Compile Include="lhpes3d\modules\pose.py" />
     <Compile Include="lhpes3d\modules\__init__.py" />
     <Compile Include="lhpes3d\scripts\convert_to_onnx.py" />
-    <Compile Include="lhpes3d\setup.py" />
     <Compile Include="lhpes3d\__init__.py" />
     <Compile Include="MSG3D\data_gen\gen_bone_data.py" />
     <Compile Include="MSG3D\data_gen\kinetics_gendata.py" />

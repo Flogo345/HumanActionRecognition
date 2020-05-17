@@ -9,11 +9,13 @@ from PIL import Image
 from torch.autograd import Variable
 from os import listdir
 
+from argparse import ArgumentParser
+import json
 import numpy as np
 import cv2
 
 from MSG3D.msg3dRunningProcessor import MSG3DRunningProcessor
-from lhpes3d.lhpes3dRunningProcessor import LPES3DRunningProcessor
+from lhpes3d.lhpes3dRunningProcessor import LPES3DRunningProcessor, rotate_poses
 from lhpes3d.modules.input_reader import VideoReader
 from lhpes3d.modules.draw import Plotter3d, draw_poses
 from lhpes3d.modules.parse_poses import parse_poses
@@ -36,13 +38,13 @@ def msg3dTest():
 
 def humanActionRecognition():
     #Initialization
-    video = 0
+    video = 0 #video = r'D:\Repos\HumanActionRecognition\Boxing_03Videvo.mov' #video = 0; #
     height_size = 256
     fx = -1
-    lpes3d_model_path = r'D:\Repos\HumanActionRecognition\human-pose-estimation-3d.pth'
-    msg3d_model_path = r'D:\Repos\HumanActionRecognition\ntu120-xset-joint.pt'
+    lpes3d_model_path = r'..\..\..\human-pose-estimation-3d.pth'
+    msg3d_model_path = r'..\..\..\ntu120-xset-joint.pt'
 
-    lpes3d_model = LPES3DRunningProcessor(model_path)
+    lpes3d_model = LPES3DRunningProcessor(lpes3d_model_path)
     msg3d_model = MSG3DRunningProcessor(msg3d_model_path)
 
 
@@ -53,14 +55,18 @@ def humanActionRecognition():
     cv2.setMouseCallback(canvas_3d_window_name, Plotter3d.mouse_callback)
 
     
-    file_path = os.path.join('data', 'extrinsics.json')
+    file_path = os.path.join('lhpes3d\data', 'extrinsics.json')
     with open(file_path, 'r') as f:
         extrinsics = json.load(f)
     R = np.array(extrinsics['R'], dtype=np.float32)
     t = np.array(extrinsics['t'], dtype=np.float32)
 
     #Frameprovider (for stream)
-    frame_provider = VideoReader(video)
+    #frame_provider = VideoReader(video)
+    cam = cv2.VideoCapture(0)
+    #cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    #cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
     is_video = True
     base_height = height_size
 
@@ -70,9 +76,11 @@ def humanActionRecognition():
     space_code = 32
     mean_time = 0
 
-
+   
     #Main running loop
-    for frame in frame_provider:
+    #for frame in frame_provider:
+    while True:
+        ret_val, frame = cam.read()
         current_time = cv2.getTickCount()
         if frame is None:
             break

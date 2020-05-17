@@ -41,3 +41,4 @@ class VideoReader:
         if not was_read:
             raise StopIteration
         return img
+
