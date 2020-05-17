@@ -83,7 +83,7 @@ def humanActionRecognition():
             fx = np.float32(0.8 * frame.shape[1])
 
         #Determin Value with model 
-        inference_result = lpes3d_model.infer(scaled_img)
+        inference_result = lpes3d_model(scaled_img)
         poses_3d, poses_2d = parse_poses(inference_result, input_scale, 8, fx, is_video)
         edges = []
         if len(poses_3d):
