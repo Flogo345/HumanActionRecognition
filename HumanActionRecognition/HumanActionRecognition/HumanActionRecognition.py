@@ -56,7 +56,7 @@ class RunningProcessor():
         self.buffer = []
         self.joint_map_msg3d_lhpes3d = [2, -1, 0, 1, 3, 4, 5, 5, 9, 10, 11, 11, 6, 7, 8, 8, 12, 13, 14, 14, -2, 5, 5, 11, 11]
 
-    def humanActionRecognition(self):
+    async def humanActionRecognition(self):
         self.mean_time = 0
 
         is_video = True
@@ -71,26 +71,37 @@ class RunningProcessor():
          
         msg3d_calculate_frame = 10
         msg3d_count = 0
+        msg3d_task = None
+
+        lhpes3d_count = 0
+        lhpes3d_calculate_frame = 2
         
         #Main running loop
         for frame in self.frame_provider:
             msg3d_count = (msg3d_count + 1) % msg3d_calculate_frame
+            lhpes3d_count = (lhpes3d_count + 1) % lhpes3d_calculate_frame
             self.current_time = cv2.getTickCount()
 
             if frame is None:
                 break
 
-            #Preprocess video_stream
-            scaled_img, input_scale = self.preprocessFrame(frame)
+            if (lhpes3d_count == 1):
+                #Preprocess video_stream
+                scaled_img, input_scale = self.preprocessFrame(frame)
 
-            #LHPES3D
-            self.runLhpes3d(scaled_img, input_scale)
+                #LHPES3D
+                self.runLhpes3d(scaled_img, input_scale)
 
 
             #MSG3D
-            if (len(self.buffer) >= 45 and msg3d_count == 0 ):
+            if (len(self.buffer) >= 20 and msg3d_count == 0 ):
+                if (msg3d_task != None):
+                    await msg3d_task
+                    print("Await msg3d_task")
                 init_buffer_over = True
-                self.runMsg3d()
+                print("Start msg3d_task")
+                msg3d_task = asyncio.create_task(self.runMsg3d())
+                
                 
 
             #Display results
@@ -137,10 +148,10 @@ class RunningProcessor():
             self.edges = (Plotter3d.SKELETON_EDGES + 19 * np.arange(self.poses_3d.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
 
         self.buffer.append(self.poses_3d)
-        if (len(self.buffer) > 45):
+        if (len(self.buffer) > 30):
             self.buffer.pop(0)
 
-    def runMsg3d(self):
+    async def runMsg3d(self):
         msg3d_input = np.zeros(shape=(1, 3, len(self.buffer), 25, 2), dtype= np.float)
         for chanels in range(len(msg3d_input[0])):
             for frame in range(len(msg3d_input[0][chanels])):
@@ -219,9 +230,9 @@ class RunningProcessor():
         print(out)
 
 
-def main():
+async def main():
     processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
-    processor.humanActionRecognition()
+    await processor.humanActionRecognition()
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
