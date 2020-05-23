@@ -57,13 +57,13 @@ class RunningProcessor():
         self.joint_map_msg3d_lhpes3d = [2, -1, 0, 1, 3, 4, 5, 5, 9, 10, 11, 11, 6, 7, 8, 8, 12, 13, 14, 14, -2, 5, 5, 11, 11]
 
     def humanActionRecognition(self):
-        is_video = True
+        self.mean_time = 0
 
+        is_video = True
         delay = 1
         esc_code = 27
         p_code = 112
         space_code = 32
-        self.mean_time = 0
 
         buffer_init_time = 2
         buffer_time = cv2.getTickCount() 
@@ -80,18 +80,15 @@ class RunningProcessor():
             if frame is None:
                 break
 
-            input_scale = self.height_size / frame.shape[0]
-            scaled_img = cv2.resize(frame, dsize=None, fx=input_scale, fy=input_scale)
-            scaled_img = scaled_img[:, 0:scaled_img.shape[1] - (scaled_img.shape[1] % 8)]  # better to pad, but cut out for demo
-            if self.fx < 0:  # Focal length is unknown
-                self.fx = np.float32(0.8 * frame.shape[1])
+            #Preprocess video_stream
+            scaled_img, input_scale = self.preprocessFrame(frame)
 
             #LHPES3D
             self.runLhpes3d(scaled_img, input_scale)
 
 
             #MSG3D
-            if (len(self.buffer) > 45 and msg3d_count == 0 ):
+            if (len(self.buffer) >= 45 and msg3d_count == 0 ):
                 init_buffer_over = True
                 self.runMsg3d()
                 
@@ -100,6 +97,7 @@ class RunningProcessor():
             self.displayFrame(frame)
             
 
+            #Handle UserInput
             key = cv2.waitKey(delay)
             if key == esc_code:
                 break
@@ -139,10 +137,10 @@ class RunningProcessor():
             self.edges = (Plotter3d.SKELETON_EDGES + 19 * np.arange(self.poses_3d.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
 
         self.buffer.append(self.poses_3d)
+        if (len(self.buffer) > 45):
+            self.buffer.pop(0)
 
     def runMsg3d(self):
-        print("starting Msg3d run")
-        self.buffer.pop(0)
         msg3d_input = np.zeros(shape=(1, 3, len(self.buffer), 25, 2), dtype= np.float)
         for chanels in range(len(msg3d_input[0])):
             for frame in range(len(msg3d_input[0][chanels])):
@@ -182,6 +180,16 @@ class RunningProcessor():
         cv2.putText(frame, 'Action: {}'.format(self.action_result),
                     (40, 45), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255))
         cv2.imshow('ICV 3D Human Pose Estimation', frame)
+
+
+    def preprocessFrame(self, frame):
+        input_scale = self.height_size / frame.shape[0]
+        scaled_img = cv2.resize(frame, dsize=None, fx=input_scale, fy=input_scale)
+        scaled_img = scaled_img[:, 0:scaled_img.shape[1] - (scaled_img.shape[1] % 8)]  #better to pad, but cut out for demo
+        if self.fx < 0:  # Focal length is unknown
+            self.fx = np.float32(0.8 * frame.shape[1])
+
+        return scaled_img, input_scale
 
     def writeSkeletonFile(self):
         skeleton_file = ""
