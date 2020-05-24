@@ -157,13 +157,13 @@ class Model(nn.Module):
         x = x.view(N * M, V, C, T).permute(0,2,3,1).contiguous()
 
         # Apply activation to the sum of the pathways
-        x = F.relu(self.sgcn1(x) + self.gcn3d1(x), inplace=True)
+        x = F.relu(self.sgcn1(x) + self.gcn3d1(x), inplace=True) #takes long
         x = self.tcn1(x)
 
         x = F.relu(self.sgcn2(x) + self.gcn3d2(x), inplace=True)
         x = self.tcn2(x)
 
-        x = F.relu(self.sgcn3(x) + self.gcn3d3(x), inplace=True)
+        x = F.relu(self.sgcn3(x) + self.gcn3d3(x), inplace=True) #takes long
         x = self.tcn3(x)
 
         out = x

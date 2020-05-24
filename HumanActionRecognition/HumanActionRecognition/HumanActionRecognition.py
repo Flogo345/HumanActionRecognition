@@ -59,22 +59,20 @@ class RunningProcessor():
     async def humanActionRecognition(self):
         self.mean_time = 0
 
-        is_video = True
-        delay = 1
+        #UI
+        delay = 1 #wait for key (1ms)
         esc_code = 27
         p_code = 112
         space_code = 32
-
-        buffer_init_time = 2
-        buffer_time = cv2.getTickCount() 
-        init_buffer_over = False
          
-        msg3d_calculate_frame = 10
+        #msg3d local data
+        msg3d_calculate_frame = 10 #with 60fps = 6 actions/s
         msg3d_count = 0
         msg3d_task = None
 
+        #lhpes3d local data
+        lhpes3d_calculate_frame = 3 #with 60fps = 20 sceletons/s
         lhpes3d_count = 0
-        lhpes3d_calculate_frame = 2
         
         #Main running loop
         for frame in self.frame_provider:
@@ -98,12 +96,9 @@ class RunningProcessor():
                 if (msg3d_task != None):
                     await msg3d_task
                     print("Await msg3d_task")
-                init_buffer_over = True
                 print("Start msg3d_task")
                 msg3d_task = asyncio.create_task(self.runMsg3d())
                 
-                
-
             #Display results
             self.displayFrame(frame)
             
@@ -117,7 +112,7 @@ class RunningProcessor():
                     delay = 0
                 else:
                     delay = 1
-            if delay == 0 or not is_video:  # allow to rotate 3D canvas while on pause
+            if delay == 0:  # allow to rotate 3D canvas while on pause
                 key = 0
                 while (key != p_code
                        and key != esc_code
@@ -169,7 +164,6 @@ class RunningProcessor():
                                 msg3d_input[0][chanels][frame][joint][person] = self.buffer[frame][person][index_to_read][chanels] / 1
         
 
-        np.set_printoptions(threshold=sys.maxsize)
         #msg3d_input = preprocess.pre_normalization(msg3d_input)
         msg3d_input = torch.from_numpy(msg3d_input)
         msg3d_input = msg3d_input.float().cuda()
@@ -177,6 +171,7 @@ class RunningProcessor():
         print(self.action_result)
 
     def displayFrame(self, frame):
+        np.set_printoptions(threshold=sys.maxsize)
         self.plotter.plot(self.canvas_3d, self.poses_3d, self.edges) #canvas_3d = img, poses_3d = vertices, edges = edges
         cv2.imshow(self.canvas_3d_window_name, self.canvas_3d)
 
@@ -221,17 +216,10 @@ class RunningProcessor():
         f.write(text)
         f.close()
 
-    def msg3dTest(self):
-        input =  torch.from_numpy(np.load(r'./MSG3D/data/Out/xset/val_data_joint.npy'))
-        if torch.cuda.is_available():
-            input = input.cuda()
-
-        out = self.msg3d_model(input)
-        print(out)
-
 
 async def main():
     processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
+    #processor = RunningProcessor(video=0, lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':

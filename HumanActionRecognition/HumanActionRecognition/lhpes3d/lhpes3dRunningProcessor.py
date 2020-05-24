@@ -20,9 +20,6 @@ class LPES3DRunningProcessor():
             from lhpes3d.modules.inference_engine_pytorch import InferenceEnginePyTorch
             self.model = InferenceEnginePyTorch(model_path, device)
 
-        #if torch.cuda.is_available():
-        #    self.model = self.model.cuda()
-
         
 
     def __call__(self, scaled_img):
