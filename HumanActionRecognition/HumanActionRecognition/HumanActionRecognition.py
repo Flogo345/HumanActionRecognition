@@ -165,18 +165,21 @@ class RunningProcessor():
                             
                             if (index_to_read == -1):
                                 temp = (self.buffer[frame][person][2][chanels] + 0.5 * ((self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) - self.buffer[frame][person][2][chanels])) / 1
+                                msg3d_input[0][chanels][frame][joint][person] = temp / 100.0
                             elif (index_to_read == -2):
                                 temp = (self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) / 1
+                                msg3d_input[0][chanels][frame][joint][person] = temp / 100.0
                             else:
                                 temp = self.buffer[frame][person][index_to_read][chanels] / 1
-
-                            if chanels == 2:
-                                z = self.convert_z(temp)
-                                msg3d_input[0][chanels][frame][joint][person] = z 
-                            elif chanels == 1:
-                                msg3d_input[0][chanels][frame][joint][person] = self.convert_y(temp, z)
-                            elif chanels == 0:
-                                msg3d_input[0][chanels][frame][joint][person] = self.convert_x(temp, z)
+                                msg3d_input[0][chanels][frame][joint][person] = temp / 100.0
+#
+         #                   if chanels == 2:
+        #                        z = self.convert_z(temp)
+        #                        msg3d_input[0][chanels][frame][joint][person] = z 
+        #                   elif chanels == 1:
+         #                       msg3d_input[0][chanels][frame][joint][person] = self.convert_y(temp, z)
+           #                 elif chanels == 0:
+           #                     msg3d_input[0][chanels][frame][joint][person] = self.convert_x(temp, z)
 
         self.writeSkeletonFile(msg3d_input);
         msg3d_input = preprocess.pre_normalization(msg3d_input)
