@@ -24,7 +24,12 @@ from lhpes3d.modules.input_reader import VideoReader
 from lhpes3d.modules.draw import Plotter3d, draw_poses
 from lhpes3d.modules.parse_poses import parse_poses
 
-
+kinect_depth_h_fov = 70.6
+kinect_depth_v_fov = 60.0
+average_z_ntu = 3.0
+average_z_hlpes3d = 100.0
+lhpes3d_x_res = 1280
+lhpes3d_y_res = 720
 
 class RunningProcessor():
     def __init__(self, video, lpes3d_model_path, msg3d_model_path, height_size=256, fx=-1):
@@ -148,7 +153,7 @@ class RunningProcessor():
 
     async def runMsg3d(self):
         msg3d_input = np.zeros(shape=(1, 3, len(self.buffer), 25, 2), dtype= np.float)
-        for chanels in range(len(msg3d_input[0])):
+        for chanels in range(len(msg3d_input[0]), -1, -1):
             for frame in range(len(msg3d_input[0][chanels])):
                 for joint in range(len(msg3d_input[0][chanels][frame])):
                     if (len(self.buffer[frame]) > 0):
@@ -156,13 +161,21 @@ class RunningProcessor():
                         msg3d_input[0][chanels][frame][joint] = persons_arr
                         for person in range(min(len(self.buffer[frame]), 2)):
                             index_to_read = self.joint_map_msg3d_lhpes3d[joint]
+                            
                             if (index_to_read == -1):
-                                msg3d_input[0][chanels][frame][joint][person] = (self.buffer[frame][person][2][chanels] + 0.5 * ((self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) - self.buffer[frame][person][2][chanels])) / 1
+                                temp_z = (self.buffer[frame][person][2][chanels] + 0.5 * ((self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) - self.buffer[frame][person][2][chanels])) / 1
                             elif (index_to_read == -2):
-                                msg3d_input[0][chanels][frame][joint][person] = (self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) / 1
+                                temp_z = (self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) / 1
                             else:
-                                msg3d_input[0][chanels][frame][joint][person] = self.buffer[frame][person][index_to_read][chanels] / 1
-        
+                                temp_z = self.buffer[frame][person][index_to_read][chanels] / 1
+
+                            if chanels == 2:
+                                z = temp_z
+                                msg3d_input[0][chanels][frame][joint][person] = self.convert_z(z)  
+                            elif chanels == 1:
+                                msg3d_input[0][chanels][frame][joint][person] = self.convert_y(y, z)
+                            elif chanels == 0:
+                                msg3d_input[0][chanels][frame][joint][person] = self.convert_x(x, z)
 
         #msg3d_input = preprocess.pre_normalization(msg3d_input)
         msg3d_input = torch.from_numpy(msg3d_input)
@@ -215,6 +228,15 @@ class RunningProcessor():
         f = open(name, "a")
         f.write(text)
         f.close()
+
+    def convert_z(self, z):
+        return z * average_z_ntu / average_z_hlpes3d
+
+    def convert_x(self, x, z_meter):
+        return ((x + (lhpes3d_x_res / 2.0)) % lhpes3d_x_res) * (2 * z_meter * math.tan(math.radians(kinect_depth_h_fov)) / lhpes3d_x_res)
+
+    def convert_y(self, y, z_meter):
+        return ((y + (lhpes3d_y_res / 2.0)) % lhpes3d_y_res) * (2 * z_meter * math.tan(math.radians(kinect_depth_v_fov)) / lhpes3d_y_res)
 
 
 async def main():
