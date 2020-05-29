@@ -16,6 +16,7 @@ from argparse import ArgumentParser
 import json
 import numpy as np
 import cv2
+import math
 
 from MSG3D.msg3dRunningProcessor import MSG3DRunningProcessor
 import MSG3D.data_gen.preprocess as preprocess
@@ -76,7 +77,7 @@ class RunningProcessor():
         msg3d_task = None
 
         #lhpes3d local data
-        lhpes3d_calculate_frame = 3 #with 60fps = 20 sceletons/s
+        lhpes3d_calculate_frame = 1 #3 #with 60fps = 20 sceletons/s
         lhpes3d_count = 0
         
         #Main running loop
@@ -88,7 +89,7 @@ class RunningProcessor():
             if frame is None:
                 break
 
-            if (lhpes3d_count == 1):
+            if (lhpes3d_count == 0): # Todo: change to 1
                 #Preprocess video_stream
                 scaled_img, input_scale = self.preprocessFrame(frame)
 
@@ -153,31 +154,32 @@ class RunningProcessor():
 
     async def runMsg3d(self):
         msg3d_input = np.zeros(shape=(1, 3, len(self.buffer), 25, 2), dtype= np.float)
-        for chanels in range(len(msg3d_input[0]), -1, -1):
+        for chanels in range(len(msg3d_input[0])-1, -1, -1):
             for frame in range(len(msg3d_input[0][chanels])):
                 for joint in range(len(msg3d_input[0][chanels][frame])):
+                    persons_arr = np.zeros(shape=(2))
+                    msg3d_input[0][chanels][frame][joint] = persons_arr
                     if (len(self.buffer[frame]) > 0):
-                        persons_arr = np.zeros(shape=(2))
-                        msg3d_input[0][chanels][frame][joint] = persons_arr
                         for person in range(min(len(self.buffer[frame]), 2)):
                             index_to_read = self.joint_map_msg3d_lhpes3d[joint]
                             
                             if (index_to_read == -1):
-                                temp_z = (self.buffer[frame][person][2][chanels] + 0.5 * ((self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) - self.buffer[frame][person][2][chanels])) / 1
+                                temp = (self.buffer[frame][person][2][chanels] + 0.5 * ((self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) - self.buffer[frame][person][2][chanels])) / 1
                             elif (index_to_read == -2):
-                                temp_z = (self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) / 1
+                                temp = (self.buffer[frame][person][9][chanels] + 0.5 * (self.buffer[frame][person][3][chanels] - self.buffer[frame][person][9][chanels])) / 1
                             else:
-                                temp_z = self.buffer[frame][person][index_to_read][chanels] / 1
+                                temp = self.buffer[frame][person][index_to_read][chanels] / 1
 
                             if chanels == 2:
-                                z = temp_z
-                                msg3d_input[0][chanels][frame][joint][person] = self.convert_z(z)  
+                                z = self.convert_z(temp)
+                                msg3d_input[0][chanels][frame][joint][person] = z 
                             elif chanels == 1:
-                                msg3d_input[0][chanels][frame][joint][person] = self.convert_y(y, z)
+                                msg3d_input[0][chanels][frame][joint][person] = self.convert_y(temp, z)
                             elif chanels == 0:
-                                msg3d_input[0][chanels][frame][joint][person] = self.convert_x(x, z)
+                                msg3d_input[0][chanels][frame][joint][person] = self.convert_x(temp, z)
 
-        #msg3d_input = preprocess.pre_normalization(msg3d_input)
+        self.writeSkeletonFile(msg3d_input);
+        msg3d_input = preprocess.pre_normalization(msg3d_input)
         msg3d_input = torch.from_numpy(msg3d_input)
         msg3d_input = msg3d_input.float().cuda()
         self.action_result = self.msg3d_model(msg3d_input)
@@ -210,12 +212,12 @@ class RunningProcessor():
 
         return scaled_img, input_scale
 
-    def writeSkeletonFile(self):
+    def writeSkeletonFile(self, msg3d_input):
         skeleton_file = ""
         skeleton_file += str(len(self.buffer)) + "\n"
         for temp_frame in range(len(self.buffer)):
             skeleton_file += str(len(self.buffer[temp_frame])) + "\n"
-            for person in range(len(self.buffer[temp_frame])):
+            for person in range(min(len(self.buffer[temp_frame]), 2)):
                 skeleton_file += "0 0 0 0 0 0 0 0 0 0" + "\n"
                 skeleton_file += str(len(self.buffer[temp_frame][person])) + "\n"
                 for joint in range(len(msg3d_input[0][0][temp_frame])):
@@ -233,14 +235,15 @@ class RunningProcessor():
         return z * average_z_ntu / average_z_hlpes3d
 
     def convert_x(self, x, z_meter):
-        return ((x + (lhpes3d_x_res / 2.0)) % lhpes3d_x_res) * (2 * z_meter * math.tan(math.radians(kinect_depth_h_fov)) / lhpes3d_x_res)
+        return (lhpes3d_x_res / 2.0 - x) * (2 * z_meter * math.tan(math.radians(kinect_depth_h_fov / 2.0)) / lhpes3d_x_res)
 
     def convert_y(self, y, z_meter):
-        return ((y + (lhpes3d_y_res / 2.0)) % lhpes3d_y_res) * (2 * z_meter * math.tan(math.radians(kinect_depth_v_fov)) / lhpes3d_y_res)
+        return (lhpes3d_y_res / 2.0 - y) * (2 * z_meter * math.tan(math.radians(kinect_depth_v_fov / 2.0)) / lhpes3d_y_res)
 
 
 async def main():
     processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
+    #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\A58_RGB.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
     #processor = RunningProcessor(video=0, lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
     await processor.humanActionRecognition()
 
