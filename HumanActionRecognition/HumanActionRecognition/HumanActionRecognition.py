@@ -6,8 +6,6 @@ import torch.nn.functional as F
 import torch.optim as optim
 import random
 import threading
-from torchvision import transforms
-from PIL import Image
 from torch.autograd import Variable
 from os import listdir
 import sys
@@ -53,7 +51,7 @@ class RunningProcessor():
         cv2.namedWindow(self.canvas_3d_window_name)
         cv2.setMouseCallback(self.canvas_3d_window_name, Plotter3d.mouse_callback)
 
-        file_path = os.path.join('lhpes3d\data', 'extrinsics.json')
+        file_path = os.path.join('lhpes3d/data', 'extrinsics.json')
         with open(file_path, 'r') as f:
             extrinsics = json.load(f)
         self.R = np.array(extrinsics['R'], dtype=np.float32)
@@ -72,12 +70,12 @@ class RunningProcessor():
         space_code = 32
          
         #msg3d local data
-        msg3d_calculate_frame = 10 #with 60fps = 6 actions/s
+        msg3d_calculate_frame = 40 #with 60fps = 6 actions/s
         msg3d_count = 0
         msg3d_task = None
 
         #lhpes3d local data
-        lhpes3d_calculate_frame = 1 #3 #with 60fps = 20 sceletons/s
+        lhpes3d_calculate_frame = 1 #with 60fps = 20 sceletons/s
         lhpes3d_count = 0
         
         #Main running loop
@@ -149,7 +147,7 @@ class RunningProcessor():
             self.edges = (Plotter3d.SKELETON_EDGES + 19 * np.arange(self.poses_3d.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
 
         self.buffer.append(self.poses_3d)
-        if (len(self.buffer) > 100):
+        if (len(self.buffer) > 60):
             self.buffer.pop(0)
 
     async def runMsg3d(self):
@@ -177,7 +175,7 @@ class RunningProcessor():
                                 #z = self.convert_z(temp)
                                 msg3d_input[0][chanels][frame][joint][person] = temp #z 
                             elif chanels == 1:
-                                msg3d_input[0][chanels][frame][joint][person] = temp #self.convert_y(temp, z)
+                                msg3d_input[0][chanels][frame][joint][person] = -temp #self.convert_y(temp, z)
                             elif chanels == 0:
                                 msg3d_input[0][chanels][frame][joint][person] = temp #self.convert_x(temp, z)
 
@@ -190,8 +188,8 @@ class RunningProcessor():
 
     def displayFrame(self, frame):
         np.set_printoptions(threshold=sys.maxsize)
-        self.plotter.plot(self.canvas_3d, self.poses_3d, self.edges) #canvas_3d = img, poses_3d = vertices, edges = edges
-        cv2.imshow(self.canvas_3d_window_name, self.canvas_3d)
+        #self.plotter.plot(self.canvas_3d, self.poses_3d, self.edges) #canvas_3d = img, poses_3d = vertices, edges = edges
+        #cv2.imshow(self.canvas_3d_window_name, self.canvas_3d)
 
         draw_poses(frame, self.poses_2d)
         self.current_time = (cv2.getTickCount() - self.current_time) / cv2.getTickFrequency()
@@ -247,7 +245,8 @@ class RunningProcessor():
 async def main():
     #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
     #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\A58_RGB.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
-    processor = RunningProcessor(video=0, lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
+    processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\walking4.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
+    #processor = RunningProcessor(video=0, lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':
