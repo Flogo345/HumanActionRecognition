@@ -258,7 +258,7 @@ async def main():
     #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
     #processor = RunningProcessor(video=r'/home/hskass2020p7/dev/walking3.mp4', lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
     #processor = RunningProcessor(video=3, lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
-    processor = RunningProcessor(args.video, lpes3d_model_path=args.lhpe3d, msg3d_model_path=args.msg3d)
+    processor = RunningProcessor(args.video, lpes3d_model_path=args.lhpe3dmodel, msg3d_model_path=args.msg3dmodel)
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':
