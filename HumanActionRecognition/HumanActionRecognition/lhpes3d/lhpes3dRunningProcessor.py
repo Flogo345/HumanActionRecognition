@@ -11,7 +11,7 @@ from lhpes3d.modules.draw import Plotter3d, draw_poses
 from lhpes3d.modules.parse_poses import parse_poses
 
 
-class LPES3DRunningProcessor():
+class LHPES3DRunningProcessor():
     def __init__(self, model_path, use_openvino=False, device='GPU'):
         if use_openvino:
             from lhpes3d.modules.inference_engine_openvino import InferenceEngineOpenVINO

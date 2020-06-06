@@ -18,7 +18,7 @@ import math
 
 from MSG3D.msg3dRunningProcessor import MSG3DRunningProcessor
 import MSG3D.data_gen.preprocess as preprocess
-from lhpes3d.lhpes3dRunningProcessor import LPES3DRunningProcessor, rotate_poses
+from lhpes3d.lhpes3dRunningProcessor import LHPES3DRunningProcessor, rotate_poses
 from lhpes3d.modules.input_reader import VideoReader
 from lhpes3d.modules.draw import Plotter3d, draw_poses
 from lhpes3d.modules.parse_poses import parse_poses
@@ -26,7 +26,7 @@ from lhpes3d.modules.parse_poses import parse_poses
 kinect_depth_h_fov = 70.6
 kinect_depth_v_fov = 60.0
 average_z_ntu = 3.0
-average_z_hlpes3d = 100.0
+average_z_lhpes3d = 100.0
 lhpes3d_x_res = 1280
 lhpes3d_y_res = 720
 
@@ -38,9 +38,9 @@ class RunningProcessor():
         self.fx = fx
 
         #models
-        self.lpes3d_model_path = lhpes3d_model_path
+        self.lhpes3d_model_path = lhpes3d_model_path
         self.msg3d_model_path = msg3d_model_path
-        self.lpes3d_model = LPES3DRunningProcessor(lpes3d_model_path)
+        self.lhpes3d_model = LHPES3DRunningProcessor(lhpes3d_model_path)
         self.msg3d_model = MSG3DRunningProcessor(msg3d_model_path)
         self.action_result = "Loading"
 
@@ -133,7 +133,7 @@ class RunningProcessor():
 
     def runLhpes3d(self, scaled_img, input_scale):
         #Determin Value with model 
-        inference_result = self.lpes3d_model(scaled_img)
+        inference_result = self.lhpes3d_model(scaled_img)
         self.poses_3d, self.poses_2d = parse_poses(inference_result, input_scale, 8, self.fx, True)
         self.edges = []
         if len(self.poses_3d):
@@ -234,7 +234,7 @@ class RunningProcessor():
         f.close()
 
     def convert_z(self, z):
-        return z * average_z_ntu / average_z_hlpes3d
+        return z * average_z_ntu / average_z_lhpes3d
 
     def convert_x(self, x, z_meter):
         return (lhpes3d_x_res / 2.0 - x) * (2 * z_meter * math.tan(math.radians(kinect_depth_h_fov / 2.0)) / lhpes3d_x_res)
