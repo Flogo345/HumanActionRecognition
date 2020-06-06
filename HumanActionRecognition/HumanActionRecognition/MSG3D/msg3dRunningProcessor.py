@@ -219,37 +219,29 @@ def get_parser():
 
 
 class MSG3DRunningProcessor():
-    def __init__(self, model_path):
+    def __init__(self, model_path, display_all_categories):
         self.model = msg3d.Model(120, 25, 2, 13, 6, ".graph.ntu_rgb_d.AdjMatrixGraph")
         if torch.cuda.is_available():
             self.model = self.model.cuda()
         self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
-
-    def __call__(self, input):
-        out = self.model(input)
-        out = self.postprocessing(out)
-        return out
-
-    def postprocessing(self, results):
-        index = results.data.max(1, keepdim=True)[1]
-        index = index.item() +1
-        print(index)
-        #switcher = {
-        #        23: "Handwaving",
-        #        24: "Kicking",
-        #        50: "Punch/Slap",
-        #        51: "Kicking",
-        #        52: "Pushing",
-        #        58: "Handshake", #TODO: delete
-        #        59: "Walking",
-        #        60: "Walking",
-        #        100: "Kicking",
-        #        102: "Kicking",
-        #        106: "Hit with object",
-        #        110: "Shoot with gun"    
-        #    }
-        switcher = {
+        if display_all_categories:
+            self.switcher = {
+                23: "Handwaving",
+                24: "Kicking",
+                50: "Punch/Slap",
+                51: "Kicking",
+                52: "Pushing",
+                58: "Handshake", #TODO: delete
+                59: "Walking",
+                60: "Walking",
+                100: "Kicking",
+                102: "Kicking",
+                106: "Hit with object",
+                110: "Shoot with gun"    
+            }
+        else:
+            self.switcher = {
                 1: "drink water    ",
                 2: "eat meal    ",
                 3: "brush teeth    ",
@@ -371,7 +363,17 @@ class MSG3DRunningProcessor():
                 119: "support somebody    ",
                 120: "rock-paper-scissors" 
             }
-        return switcher.get(index, "Unknown Action")
+        
+
+    def __call__(self, input):
+        out = self.model(input)
+        out = self.postprocessing(out)
+        return out
+
+    def postprocessing(self, results):
+        index = results.data.max(1, keepdim=True)[1]
+        index = index.item() +1
+        return self.switcher.get(index, "Unknown Action")
 
 
 class Processor():

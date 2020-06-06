@@ -31,7 +31,7 @@ lhpes3d_x_res = 1280
 lhpes3d_y_res = 720
 
 class RunningProcessor():
-    def __init__(self, video, lhpes3d_model_path, msg3d_model_path, height_size=256, fx=-1):
+    def __init__(self, video, lhpes3d_model_path, msg3d_model_path, display_all_categories, height_size=256, fx=-1):
         #video
         self.frame_provider = VideoReader(video)
         self.height_size = height_size
@@ -41,7 +41,7 @@ class RunningProcessor():
         self.lhpes3d_model_path = lhpes3d_model_path
         self.msg3d_model_path = msg3d_model_path
         self.lhpes3d_model = LHPES3DRunningProcessor(lhpes3d_model_path)
-        self.msg3d_model = MSG3DRunningProcessor(msg3d_model_path)
+        self.msg3d_model = MSG3DRunningProcessor(msg3d_model_path, display_all_categories)
         self.action_result = "Loading"
 
         #Plotting
@@ -253,12 +253,10 @@ async def main():
                         help='Required. Path to trained Lightweight Human Pose Estimation 3D Model',
                         type=str, required=True)
     parser.add_argument('--video', help='Optional. Path to video file or camera id.', type=str, default=0)
+    parser.add_argument('--allcategories', help='Optional. True to see all categories instead of the filtered version.', type=bool, default=False)
     args = parser.parse_args()
 
-    #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lhpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
-    #processor = RunningProcessor(video=r'/home/hskass2020p7/dev/walking3.mp4', lhpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
-    #processor = RunningProcessor(video=3, lhpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
-    processor = RunningProcessor(args.video, lhpes3d_model_path=args.lhpe3dmodel, msg3d_model_path=args.msg3dmodel)
+    processor = RunningProcessor(args.video, lhpes3d_model_path=args.lhpe3dmodel, msg3d_model_path=args.msg3dmodel, display_all_categories=args.allcategories)
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':
