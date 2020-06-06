@@ -2,12 +2,12 @@ import numpy as np
 
 from lhpes3d.modules.pose import Pose, propagate_ids
 try:
-    from lhpes3d.pose_extractor import extract_poses
+    from lhpes3d.pose_extractor.build.pose_extractor import extract_poses
 except:
     print('#### Cannot load fast pose extraction, switched to legacy slow implementation. ####')
     from lhpes3d.modules.legacy_pose_extractor import extract_poses
 
-AVG_PERSON_HEIGHT = 180
+AVG_PERSON_HEIGHT = 170
 
 # pelvis (body center) is missing, id == 2
 map_id_to_panoptic = [1, 0, 9, 10, 11, 3, 4, 5, 12, 13, 14, 6, 7, 8, 15, 16, 17, 18]

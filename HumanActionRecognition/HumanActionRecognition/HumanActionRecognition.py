@@ -6,8 +6,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import random
 import threading
-from torchvision import transforms
-from PIL import Image
+#from torchvision import transforms
+#from PIL import Image
 from torch.autograd import Variable
 from os import listdir
 import sys
@@ -53,7 +53,7 @@ class RunningProcessor():
         cv2.namedWindow(self.canvas_3d_window_name)
         cv2.setMouseCallback(self.canvas_3d_window_name, Plotter3d.mouse_callback)
 
-        file_path = os.path.join('lhpes3d\data', 'extrinsics.json')
+        file_path = os.path.join('lhpes3d/data', 'extrinsics.json')
         with open(file_path, 'r') as f:
             extrinsics = json.load(f)
         self.R = np.array(extrinsics['R'], dtype=np.float32)
@@ -72,7 +72,7 @@ class RunningProcessor():
         space_code = 32
          
         #msg3d local data
-        msg3d_calculate_frame = 10 #with 60fps = 6 actions/s
+        msg3d_calculate_frame = 30 #with 60fps = 6 actions/s
         msg3d_count = 0
         msg3d_task = None
 
@@ -103,7 +103,8 @@ class RunningProcessor():
                     await msg3d_task
                     print("Await msg3d_task")
                 print("Start msg3d_task")
-                msg3d_task = asyncio.create_task(self.runMsg3d())
+                loop = asyncio.get_event_loop()
+                msg3d_task = loop.create_task(self.runMsg3d())
                 
             #Display results
             self.displayFrame(frame)
@@ -246,9 +247,11 @@ class RunningProcessor():
 
 async def main():
     #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
-    #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\A58_RGB.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
-    processor = RunningProcessor(video=0, lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
+    #processor = RunningProcessor(video=r'/home/hskass2020p7/dev/walking3.mp4', lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
+    processor = RunningProcessor(video=3, lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+   # asyncio.run(main())
+   loop = asyncio.get_event_loop()
+   loop.run_until_complete(main())
