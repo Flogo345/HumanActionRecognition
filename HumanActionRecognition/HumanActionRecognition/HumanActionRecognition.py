@@ -244,9 +244,21 @@ class RunningProcessor():
 
 
 async def main():
+    parser = ArgumentParser(description='3D Human Action Recognition. '
+                                        'Press esc to exit, "p" to (un)pause video or process next image.')
+    parser.add_argument('-msg3d', '--msg3dmodel',
+                        help='Required. Path to trained MS-G3D Model',
+                        type=str, required=True)
+    parser.add_argument('-lhpe3d', '--lhpe3dmodel',
+                        help='Required. Path to trained Lightweight Human Pose Estimation 3D Model',
+                        type=str, required=True)
+    parser.add_argument('--video', help='Optional. Path to video file or camera id.', type=str, default=0)
+    args = parser.parse_args()
+
     #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
     #processor = RunningProcessor(video=r'/home/hskass2020p7/dev/walking3.mp4', lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
-    processor = RunningProcessor(video=3, lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
+    #processor = RunningProcessor(video=3, lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
+    processor = RunningProcessor(args.video, lpes3d_model_path=args.lhpe3d, msg3d_model_path=args.msg3d)
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':
