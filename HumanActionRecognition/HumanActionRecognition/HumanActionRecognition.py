@@ -70,7 +70,7 @@ class RunningProcessor():
         space_code = 32
          
         #msg3d local data
-        msg3d_calculate_frame = 40 #with 60fps = 6 actions/s
+        msg3d_calculate_frame = 30 #with 60fps = 6 actions/s
         msg3d_count = 0
         msg3d_task = None
 
@@ -101,7 +101,8 @@ class RunningProcessor():
                     await msg3d_task
                     print("Await msg3d_task")
                 print("Start msg3d_task")
-                msg3d_task = asyncio.create_task(self.runMsg3d())
+                loop = asyncio.get_event_loop()
+                msg3d_task = loop.create_task(self.runMsg3d())
                 
             #Display results
             self.displayFrame(frame)
@@ -244,10 +245,11 @@ class RunningProcessor():
 
 async def main():
     #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\ballthrow.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
-    #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\A58_RGB.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
-    processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\walking4.mp4', lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
-    #processor = RunningProcessor(video=0, lpes3d_model_path=r'..\..\..\human-pose-estimation-3d.pth', msg3d_model_path=r'..\..\..\ntu120-xset-joint.pt')
+    #processor = RunningProcessor(video=r'/home/hskass2020p7/dev/walking3.mp4', lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
+    processor = RunningProcessor(video=3, lpes3d_model_path=r'../../../human-pose-estimation-3d.pth', msg3d_model_path=r'../../../ntu120-xset-joint.pt')
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+   # asyncio.run(main())
+   loop = asyncio.get_event_loop()
+   loop.run_until_complete(main())
