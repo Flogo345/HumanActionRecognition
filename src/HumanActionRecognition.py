@@ -44,13 +44,6 @@ class RunningProcessor():
         self.msg3d_model = MSG3DRunningProcessor(msg3d_model_path, display_all_categories)
         self.action_result = "Loading"
 
-        #Plotting
-        self.canvas_3d = np.zeros((720, 1280, 3), dtype=np.uint8)
-        self.plotter = Plotter3d(self.canvas_3d.shape[:2])
-        self.canvas_3d_window_name = 'Canvas 3D'
-        cv2.namedWindow(self.canvas_3d_window_name)
-        cv2.setMouseCallback(self.canvas_3d_window_name, Plotter3d.mouse_callback)
-
         file_path = os.path.join('lhpes3d/data', 'extrinsics.json')
         with open(file_path, 'r') as f:
             extrinsics = json.load(f)
@@ -252,7 +245,7 @@ async def main():
     
     processor = RunningProcessor(args.video, lhpes3d_model_path=args.lhpe3dmodel, msg3d_model_path=args.msg3dmodel, display_all_categories=args.allcategories)
     
-    #processor = RunningProcessor(video=r'D:\Repos\HumanActionRecognition\walking4.mp4', lhpes3d_model_path=r'D:\Repos\HumanActionRecognition\lhpes3dmodel.pth', msg3d_model_path=r'D:\Repos\HumanActionRecognition\msg3dmodel.pt', display_all_categories=True) #for testing in IDE
+    #processor = RunningProcessor(video=0, lhpes3d_model_path=r'..\pretrained-models\lhpes3dmodel.pth', msg3d_model_path=r'..\pretrained-models\msg3dmodel.pt', display_all_categories=True) #for testing in IDE sample walking video: r'..\datasets\walking4.mp4'
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':
