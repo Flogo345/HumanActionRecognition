@@ -241,11 +241,16 @@ async def main():
     parser.add_argument('-lhpe3d', '--lhpe3dmodel',
                         help='Required. Path to trained Lightweight Human Pose Estimation 3D Model',
                         type=str, required=True)
-    parser.add_argument('--video', help='Optional. Path to video file or camera id.', type=str, default=0)
-    parser.add_argument('--allcategories', help='Optional. True to see all categories instead of the filtered version.', type=bool, default=False)
+    parser.add_argument('--video', help='Optional. Path to video file or camera id.', type=str, default='0')
+    parser.add_argument('--allcategories', help='Optional. True to see all categories instead of the filtered version.', type=str, default='n')
     args = parser.parse_args()
     
-    processor = RunningProcessor(args.video, lhpes3d_model_path=args.lhpe3dmodel, msg3d_model_path=args.msg3dmodel, display_all_categories=args.allcategories)
+    if args.allcategories == 'y' or args.allcategories == '1' or args.allcategories == 'True':
+        display_all_categories_arg = True
+    else:
+        display_all_categories_arg = False
+
+    processor = RunningProcessor(args.video, lhpes3d_model_path=args.lhpe3dmodel, msg3d_model_path=args.msg3dmodel, display_all_categories=display_all_categories_arg)
     
     #processor = RunningProcessor(video=r'..\datasets\walking4.mp4', lhpes3d_model_path=r'..\pretrained-models\lhpes3dmodel.pth', msg3d_model_path=r'..\pretrained-models\msg3dmodel.pt', display_all_categories=True) #for testing in IDE sample walking video: r'..\datasets\walking4.mp4'
     await processor.humanActionRecognition()

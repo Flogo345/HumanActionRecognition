@@ -17,7 +17,7 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 from torch.optim.lr_scheduler import MultiStepLR
-import utils
+import MSG3D.utils
 from MSG3D.model import msg3d
 from MSG3D.graph import ntu_rgb_d
 

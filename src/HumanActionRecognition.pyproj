@@ -12,7 +12,7 @@
     <OutputPath>.</OutputPath>
     <Name>HumanActionRecognition</Name>
     <RootNamespace>HumanActionRecognition</RootNamespace>
-    <InterpreterId>CondaEnv|CondaEnv|Miniconda3</InterpreterId>
+    <InterpreterId>Global|PythonCore|3.7</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,7 +71,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="CondaEnv|CondaEnv|Miniconda3" />
+    <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda37-64" />
+    <InterpreterReference Include="Global|PythonCore|3.7" />
+    <InterpreterReference Include="Global|PythonCore|3.8-32" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lhpes3d\" />
