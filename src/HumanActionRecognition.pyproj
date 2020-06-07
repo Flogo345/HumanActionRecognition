@@ -100,7 +100,6 @@
     <Folder Include="MSG3D\model\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="lhpes3d\.gitignore" />
     <Content Include="lhpes3d\CONTRIBUTORS.md" />
     <Content Include="lhpes3d\data\extrinsics.json" />
     <Content Include="lhpes3d\data\human_pose_estimation_3d_demo.jpg" />
@@ -113,8 +112,6 @@
     <Content Include="lhpes3d\pose_extractor\src\peak.cpp" />
     <Content Include="lhpes3d\pose_extractor\src\peak.hpp" />
     <Content Include="lhpes3d\pose_extractor\wrapper.cpp" />
-    <Content Include="lhpes3d\README.md" />
-    <Content Include="requirements.txt" />
     <Content Include="MSG3D\config\kinetics-skeleton\test_bone.yaml" />
     <Content Include="MSG3D\config\kinetics-skeleton\test_joint.yaml" />
     <Content Include="MSG3D\config\kinetics-skeleton\train_bone.yaml" />
@@ -149,7 +146,6 @@
     <Content Include="MSG3D\data\Skeleton\S001C001P001R001A050.skeleton" />
     <Content Include="MSG3D\eval_pretrained.sh" />
     <Content Include="MSG3D\LICENSE" />
-    <Content Include="MSG3D\README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

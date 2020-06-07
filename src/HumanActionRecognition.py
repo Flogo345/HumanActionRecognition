@@ -90,7 +90,7 @@ class RunningProcessor():
 
 
             #MS-G3D
-            if (len(self.buffer) >= 20 and msg3d_count == 0 ):
+            if (len(self.buffer) >= 30 and msg3d_count == 0 ):
                 if (msg3d_task != None):
                     await msg3d_task
                     print("Await msg3d_task")
@@ -146,6 +146,8 @@ class RunningProcessor():
 
     def mappingFromLHPES3DToMSG3D(self):
         #Mapping
+        #Buffer(LHPES3D) input format: frames, persons, joints = 19, chanels = 3
+        #MS-G3D destination format: N(scenes = 1), C(chanels = 3), T(frames), V(joints = 25), M(persons = 2)
         msg3d_input = np.zeros(shape=(1, 3, len(self.buffer), 25, 2), dtype= np.float)
         for chanels in range(len(msg3d_input[0])-1, -1, -1):
             for frame in range(len(msg3d_input[0][chanels])):
@@ -245,7 +247,7 @@ async def main():
     
     processor = RunningProcessor(args.video, lhpes3d_model_path=args.lhpe3dmodel, msg3d_model_path=args.msg3dmodel, display_all_categories=args.allcategories)
     
-    #processor = RunningProcessor(video=0, lhpes3d_model_path=r'..\pretrained-models\lhpes3dmodel.pth', msg3d_model_path=r'..\pretrained-models\msg3dmodel.pt', display_all_categories=True) #for testing in IDE sample walking video: r'..\datasets\walking4.mp4'
+    #processor = RunningProcessor(video=r'..\datasets\walking4.mp4', lhpes3d_model_path=r'..\pretrained-models\lhpes3dmodel.pth', msg3d_model_path=r'..\pretrained-models\msg3dmodel.pt', display_all_categories=True) #for testing in IDE sample walking video: r'..\datasets\walking4.mp4'
     await processor.humanActionRecognition()
 
 if __name__ == '__main__':
