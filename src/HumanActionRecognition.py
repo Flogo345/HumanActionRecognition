@@ -137,7 +137,7 @@ class RunningProcessor():
     async def runMsg3d(self):
         msg3d_input = self.mappingFromLHPES3DToMSG3D()
         #np.set_printoptions(threshold=sys.maxsize)
-        #self.writeSkeletonFile(msg3d_input) Debug option to see skeleton file (without normalization)
+        #self.writeSkeletonFile(msg3d_input) #Debug option to see skeleton file (without normalization)
         msg3d_input = preprocess.pre_normalization(msg3d_input)
         msg3d_input = torch.from_numpy(msg3d_input)
         msg3d_input = msg3d_input.float().cuda()
